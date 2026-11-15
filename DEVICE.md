@@ -63,3 +63,17 @@ traced as the button/backlight/heating modules are reconstructed (see
 PROGRESS.md). Heating uses the NTC on **ADC channel 0x03** (open/short window
 [0x15, 0xF8), `0xF628`) and the button resistor ladder uses **ADC channel
 0x02**.
+
+## Naming note (ch 0x0A acquisition vs. variant coding)
+
+For historical reasons the ADC channel-0x0A acquisition chain in `inputs.c`
+carries `Coding_*` names (`Coding_Sample`/`Coding_Normalize`/… → `g_codingAdc`
+[0x0267], `g_codingNorm*` [0x026C]). Verified against the image, that chain's
+normalised output is actually the **backlight dimming level** that the TPM1
+ch-2 PWM follows (`Backlight_Isr`, 0xF3B7), and the detection state machine in
+`wheel_io.c` validates that same channel. The **variant/equipment coding** is
+the separate GPIO-strap read (`Coding_Calibrate`, 0xF73F, tables 0xFF71/0xFF74
+→ `g_codingStrap0/1` [0x02BD/0x02BE]). The two are distinct; the `Coding_*`
+acquisition names should be read as "the dimming/level channel", not the
+variant code. Symbols were left stable to keep the commit history and the
+`[0xXXXX]` anchors legible; this note is the authoritative mapping.

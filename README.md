@@ -13,11 +13,41 @@ It is the same firmware family as the A4 B8 panel in the companion repo
 the AW32 part, this 16 KB image is a **single application with no separate
 LIN bootloader** (reset vector → 0xC4C0 directly).
 
-> **Status.** Work in progress, reconstructed module-by-module (tracked in
-> `PROGRESS.md`). The core (startup, scheduler, time base, clock, COP) is
-> reconstructed C; the rest is being filled in. `reference/application.asm`
-> is the full symbol-annotated disassembly and the byte-exact ground truth.
-> `make check` compiles the C as well-formed C (host gcc).
+> **Status.** The whole application is reconstructed to commented C, module by
+> module (tracked in `PROGRESS.md`): start-up and the full `App_InitAll`,
+> the cooperative scheduler and its periodic tasks, the ADC coding/dimming
+> acquisition, the detection/excitation engine, the button scan + debounce
+> and the published button/scroll signals, the backlight PWM, heating, the
+> reset log + background self-tests, the LIN application layer (command decode
+> + supervision) and the LIN transport timers/diagnostics/autobaud. A handful
+> of LIN transport-core leaf helpers remain as documented externs (see
+> `PROGRESS.md`). `reference/application.asm` is the full symbol-annotated
+> disassembly and the byte-exact ground truth; `make check` compiles every
+> source as well-formed C (host gcc).
+
+## Module coverage
+
+| File | What it reconstructs |
+|------|----------------------|
+| `main.c` | reset/start-up, `App_InitAll`, clock/COP/SOPT, scheduler, default ISR |
+| `tasks.c` | the 2/10/25-tick periodic tasks + the 10-slot round robin |
+| `timebase.c` | TPM1/TPM2 init, the 1 ms time-base ISR |
+| `ports.c` | GPIO init, periodic port refresh, sleep pin states |
+| `sensor.c` | ADC front-end + single-conversion read |
+| `inputs.c` | steering-wheel coding/variant detection + ADC acquisition |
+| `wheel_io.c` | excitation drive ISR + coding/ladder measurement + detect SM |
+| `buttons.c` | button scan + nibble debounce + soft timers |
+| `signals.c` | button/scroll event handlers → published signal bytes |
+| `backlight.c` | button-backlight PWM (TPM1 ch2) + on/off control |
+| `heating.c` | steering-wheel heating (NTC ch 3 → output level) |
+| `selftest.c` | reset-cause log + background flash-CRC / RAM tests |
+| `nvm.c` | flash config store (dual bank) + background write task |
+| `power.c` | STOP sleep entry + power/bus-timeout task |
+| `lin.c` | SCI/LIN byte engines + TPM2-capture autobaud |
+| `lin_app.c` | LIN command decode + node supervision |
+| `lin_transport.c` | LIN schedule/diagnostics + ISO-TP timers |
+| `filters.c` | slew-rate filter, table interpolation, dispatch trampoline |
+| `util.c` | critical sections, delay, modulo helper |
 
 ## Layout
 ```
