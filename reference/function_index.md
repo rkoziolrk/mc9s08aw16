@@ -72,7 +72,7 @@
 | 0xDAD9 | `sub_DAD9` |
 | 0xDBB7 | `sub_DBB7` |
 | 0xDCCB | `sub_DCCB` |
-| 0xDD6C | `sub_DD6C` |
+| 0xDD6C | `LinTp_Timer` |
 | 0xDDFE | `sub_DDFE` |
 | 0xDE04 | `sub_DE04` |
 | 0xDE08 | `sub_DE08` |
@@ -100,7 +100,7 @@
 | 0xE348 | `sub_E348` |
 | 0xE50F | `sub_E50F` |
 | 0xE517 | `sub_E517` |
-| 0xE537 | `sub_E537` |
+| 0xE537 | `Scan_Isr` |
 | 0xE5A7 | `sub_E5A7` |
 | 0xE5EC | `sub_E5EC` |
 | 0xE631 | `sub_E631` |

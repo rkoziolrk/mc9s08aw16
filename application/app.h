@@ -53,6 +53,8 @@ void Tpm2_Init(void);       /* [0xC7B6] */
 void Sci_Init(void);        /* [0xCF10] */
 void Sci_SendByte(byte data);/* [0xCF36] */
 INTERRUPT void Isr_Sci1(void);/* [0xCF46] */
+INTERRUPT void Isr_Tpm2Ch0(void);/* [0xC743] */
+extern word g_tpm2NextCompare;
 
 /* sensor.c */
 void Sensor_Init(void);     /* [0xE229] */
