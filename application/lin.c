@@ -12,8 +12,6 @@
  */
 #include "app.h"
 
-extern void Lin_RxByte(byte data);       /* [0xDEA6] */
-extern void Lin_TxByteOrErr(byte event); /* [0xDFB6] */
 
 /* ======================================================================
  * Sci_Init  [0xCF10]
@@ -68,5 +66,170 @@ INTERRUPT void Isr_Sci1(void)
         }
     } else if (s1 & SCI_S1_RDRF) {
         Lin_RxByte(data);
+    }
+}
+
+/* ---- LIN byte-engine state (zero page) -------------------------------- */
+#define R8(a)        (*(volatile byte *)(a))
+#define g_linTpState   R8(0x00B1)
+#define g_linBufPtr    (*(byte * volatile *)0x00B2)
+#define g_linCrcH      R8(0x00B4)
+#define g_linCrcL      R8(0x00B5)
+#define g_linByteCnt   R8(0x00B6)
+#define g_linRxState   R8(0x00B7)
+#define g_linRespTimer R8(0x00C1)      /* re-armed to 0xA1 on each byte */
+
+extern void LinErr_Set(byte code);            /* [0xCA41] */
+extern void LinErr_Report(byte code);         /* [0xDCCB] */
+extern void LinSci_RxOn(void);                /* [0xDDFE] */
+extern void Lin_GotoSleep2(void);             /* [0xDAD7] */
+extern void LinSched_OnHeader(byte pid);      /* [0xDAD9] */
+extern void LinCrc_Fold(void);                /* [0xDE88] */
+extern void LinDiag_Response(byte kind);      /* [0xDBB7] */
+
+static void Lin_CrcAdd(byte b)
+{
+    word s = (word)(g_linCrcL + b);
+    g_linCrcL = (byte)s;
+    g_linCrcH = (byte)(g_linCrcH + (s >> 8));
+}
+
+/* ======================================================================
+ * Lin_RxByte  [0xDEA6]   master receive/response state machine (via Isr_Sci1)
+ * Identical design to the AW32 part; g_linRxState ($B7) selects the meaning
+ * of the incoming byte. Publish frames are clocked out half-duplex (the
+ * byte we put on the single-wire bus loops back and triggers the next).
+ * ====================================================================== */
+void Lin_RxByte(byte data)
+{
+    g_linRespTimer = 0xA1;
+
+    switch (g_linRxState) {
+    case 0x01:  /* PUBLISH: verify looped-back byte, send next / checksum */
+        if (*g_linBufPtr != data) {
+            LinErr_Report(0x11);
+            LinSci_RxOn();
+            g_linTpState = 0x0F;
+            return;
+        }
+        if (--g_linByteCnt != 0) {
+            g_linBufPtr++;
+            Sci_SendByte(*g_linBufPtr);
+            Lin_CrcAdd(*g_linBufPtr);
+        } else {
+            LinCrc_Fold();
+            Sci_SendByte((byte)~g_linCrcL);
+            g_linRxState = 0x02;
+        }
+        return;
+
+    case 0x02:  /* PUBLISH: checksum byte looped back */
+        LinSci_RxOn();
+        g_linTpState = 0x0F;
+        if ((byte)~g_linCrcL == data) {
+            LinDiag_Response(2);
+        } else {
+            LinErr_Report(0x11);
+        }
+        return;
+
+    case 0x08:  /* DIAGNOSTIC receive: data byte */
+        if (g_linByteCnt == 0) {
+            LinErr_Set(0x0B);
+        }
+        Lin_CrcAdd(data);
+        *g_linBufPtr = data;
+        g_linBufPtr++;
+        if (--g_linByteCnt == 0) {
+            g_linRxState = 0x09;
+        }
+        return;
+
+    case 0x09:  /* DIAGNOSTIC receive: checksum byte */
+        LinSci_RxOn();
+        g_linTpState = 0x0F;
+        LinCrc_Fold();
+        if ((byte)~g_linCrcL == data) {
+            LinDiag_Response(1);
+        } else {
+            LinErr_Report(0x14);
+        }
+        return;
+
+    case 0x80:  /* idle in the RX direction */
+        return;
+
+    case 0x90:  /* diagnostic: expect 0x55 after the request PID */
+        if (data == 0x55) {
+            g_linRxState = 0xB0;
+        } else {
+            LinErr_Report(0x03);
+            LinSci_RxOn();
+            g_linTpState = 0x0F;
+        }
+        return;
+
+    case 0xB0:  /* diagnostic request: NAD / first byte */
+        R8(0x01D8) = data;
+        LinSched_OnHeader(data);
+        return;
+
+    case 0xFF:  /* idle: bus activity -> go-to-sleep supervision */
+        LinSci_RxOn();
+        Lin_GotoSleep2();
+        return;
+
+    default:
+        LinErr_Set(0x0B);
+        return;
+    }
+}
+
+/* ======================================================================
+ * Lin_TxByteOrErr  [0xDFB6]  (bus BREAK / error handler)
+ * event = 2 for a LIN BREAK (framing error), 3/4 for overrun / other error.
+ * Flags the per-state protocol error and, on a BREAK, re-arms the receiver
+ * for the next diagnostic request header (state 0x90).
+ * ====================================================================== */
+void Lin_TxByteOrErr(byte event)
+{
+    g_linRespTimer = 0xA1;
+
+    switch (g_linRxState) {
+    case 0x01: case 0x02:
+        LinErr_Report(0x12);
+        break;
+    case 0x08: case 0x09:
+        if (event == 2) {
+            LinErr_Report(0x13);
+            goto rearm;
+        }
+        LinErr_Report(0x13);
+        LinSci_RxOn();
+        g_linTpState = 0x0F;
+        return;
+    case 0x80:
+        if (event != 2) return;
+        break;
+    case 0x90: case 0xB0:
+        LinErr_Report(0x07);
+        break;
+    case 0xFF:
+        LinSci_RxOn();
+        Lin_GotoSleep2();
+        return;
+    default:
+        LinErr_Set(0x0B);
+        return;
+    }
+
+    if (event == 2) {
+rearm:
+        g_linRxState = 0x90;
+        R8(0x01D6)   = 0x04;
+        g_linTpState = 0x11;
+    } else {
+        LinSci_RxOn();
+        g_linTpState = 0x0F;
     }
 }

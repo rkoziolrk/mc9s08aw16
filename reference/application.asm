@@ -853,7 +853,7 @@ LCA3E:
   CA40:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_CA41   [0xCA41]   <- D688, D6E1, D6F0, D72E, D94F, DE4F, DE7A, DED8
+; LinErr_Set   [0xCA41]   <- D688, D6E1, D6F0, D72E, D94F, DE4F, DE7A, DED8
 ;---------------------------------------------------------------
   CA41:  45026b       ldhx   #$026B
   CA44:  f6           lda    ,x
@@ -2375,7 +2375,7 @@ LD63D:
   D682:  415306       cbeqa  #$53, LD68B
   D685:  5f           clrx   
   D686:  a621         lda    #$21
-  D688:  cdca41       jsr    $CA41
+  D688:  cdca41       jsr    LinErr_Set
 LD68B:
   D68B:  3fc5         clr    $C5
   D68D:  3fc3         clr    $C3
@@ -2422,7 +2422,7 @@ LD68B:
   D6DB:  415306       cbeqa  #$53, LD6E4
   D6DE:  5f           clrx   
   D6DF:  a621         lda    #$21
-  D6E1:  cdca41       jsr    $CA41
+  D6E1:  cdca41       jsr    LinErr_Set
 LD6E4:
   D6E4:  95           tsx    
   D6E5:  e602         lda    2,x
@@ -2430,7 +2430,7 @@ LD6E4:
   D6EA:  410206       cbeqa  #$02, LD6F3
   D6ED:  5f           clrx   
   D6EE:  a603         lda    #$03
-  D6F0:  cdca41       jsr    $CA41
+  D6F0:  cdca41       jsr    LinErr_Set
 LD6F3:
   D6F3:  a601         lda    #$01
   D6F5:  95           tsx    
@@ -2446,7 +2446,7 @@ LD6F3:
   D70A:  cdde08       jsr    $DE08
   D70D:  2009         bra    LD718
 LD70F:
-  D70F:  cdddfe       jsr    $DDFE
+  D70F:  cdddfe       jsr    LinSci_RxOn
   D712:  cddac5       jsr    $DAC5
   D715:  6ea1c1       mov    #$A1, $C1
 LD718:
@@ -2467,7 +2467,7 @@ LD71A:
   D728:  415306       cbeqa  #$53, LD731
   D72B:  5f           clrx   
   D72C:  a621         lda    #$21
-  D72E:  cdca41       jsr    $CA41
+  D72E:  cdca41       jsr    LinErr_Set
 LD731:
   D731:  3dc2         tst    $C2
   D733:  272e         beq    LD763
@@ -2793,7 +2793,7 @@ LD932:
   D94A:  2506         bcs    LD952
   D94C:  5f           clrx   
   D94D:  a660         lda    #$60
-  D94F:  cdca41       jsr    $CA41
+  D94F:  cdca41       jsr    LinErr_Set
 LD952:
   D952:  95           tsx    
   D953:  f6           lda    ,x
@@ -3050,12 +3050,12 @@ LDAD6:
   DAD6:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_DAD7   [0xDAD7]   <- DEE1, DFE1
+; Lin_GotoSleep2   [0xDAD7]   <- DEE1, DFE1
 ;---------------------------------------------------------------
   DAD7:  20ec         bra    LDAC5
 
 ;---------------------------------------------------------------
-; sub_DAD9   [0xDAD9]   <- DF09
+; LinSched_OnHeader   [0xDAD9]   <- DF09
 ;---------------------------------------------------------------
   DAD9:  87           psha   
   DADA:  89           pshx   
@@ -3192,7 +3192,7 @@ LDBB4:
   DBB6:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_DBB7   [0xDBB7]   <- DF63, DFA8
+; LinDiag_Response   [0xDBB7]   <- DF63, DFA8
 ;---------------------------------------------------------------
   DBB7:  87           psha   
   DBB8:  89           pshx   
@@ -3354,7 +3354,7 @@ LDCC8:
   DCCA:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_DCCB   [0xDCCB]   <- DDB8, DEF0, DF47, DFB0, DFF7, E018, E020
+; LinErr_Report   [0xDCCB]   <- DDB8, DEF0, DF47, DFB0, DFF7, E018, E020
 ;---------------------------------------------------------------
   DCCB:  87           psha   
   DCCC:  89           pshx   
@@ -3504,10 +3504,10 @@ LDDB1:
   DDB5:  5f           clrx   
   DDB6:  a616         lda    #$16
 LDDB8:
-  DDB8:  cddccb       jsr    $DCCB
+  DDB8:  cddccb       jsr    LinErr_Report
 LDDBB:
   DDBB:  3fb1         clr    $B1
-  DDBD:  ad3f         bsr    LDDFE
+  DDBD:  ad3f         bsr    LinSci_RxOn
 LDDBF:
   DDBF:  b6c4         lda    $C4
   DDC1:  410105       cbeqa  #$01, LDDC9
@@ -3543,7 +3543,7 @@ LDDFB:
   DDFB:  ccd14e       jmp    $D14E
 
 ;---------------------------------------------------------------
-; sub_DDFE   [0xDDFE]   <- D70F, DDBD, DE81, DEDE, DEF3, DF4A, DF52, DF94
+; LinSci_RxOn   [0xDDFE]   <- D70F, DDBD, DE81, DEDE, DEF3, DF4A, DF52, DF94
 ;---------------------------------------------------------------
   DDFE:  6e80b7       mov    #$80, $B7
   DE01:  ccd126       jmp    $D126
@@ -3598,7 +3598,7 @@ LDE33:
   DE4A:  2606         bne    LDE52
   DE4C:  5f           clrx   
   DE4D:  a60b         lda    #$0B
-  DE4F:  cdca41       jsr    $CA41
+  DE4F:  cdca41       jsr    LinErr_Set
 LDE52:
   DE52:  55b2         ldhx   $B2
   DE54:  f6           lda    ,x
@@ -3623,17 +3623,17 @@ LDE6A:
   DE75:  2606         bne    LDE7D
   DE77:  5f           clrx   
   DE78:  a60b         lda    #$0B
-  DE7A:  cdca41       jsr    $CA41
+  DE7A:  cdca41       jsr    LinErr_Set
 LDE7D:
   DE7D:  6e08b7       mov    #$08, $B7
   DE80:  81           rts    
 LDE81:
-  DE81:  cdddfe       jsr    $DDFE
+  DE81:  cdddfe       jsr    LinSci_RxOn
   DE84:  6e0fb1       mov    #$0F, $B1
   DE87:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_DE88   [0xDE88]   <- DF35, DF9A
+; LinCrc_Fold   [0xDE88]   <- DF35, DF9A
 ;---------------------------------------------------------------
   DE88:  a7fe         ais    #$FE
   DE8A:  beb4         ldx    $B4
@@ -3683,11 +3683,11 @@ LDECC:
   DED2:  41ff09       cbeqa  #$FF, LDEDE
   DED5:  5f           clrx   
   DED6:  a60b         lda    #$0B
-  DED8:  cdca41       jsr    $CA41
+  DED8:  cdca41       jsr    LinErr_Set
   DEDB:  ccdfb3       jmp    $DFB3
 LDEDE:
-  DEDE:  cdddfe       jsr    $DDFE
-  DEE1:  cddad7       jsr    $DAD7
+  DEDE:  cdddfe       jsr    LinSci_RxOn
+  DEE1:  cddad7       jsr    Lin_GotoSleep2
   DEE4:  ccdfb3       jmp    $DFB3
 LDEE7:
   DEE7:  95           tsx    
@@ -3695,8 +3695,8 @@ LDEE7:
   DEEA:  41550f       cbeqa  #$55, LDEFC
   DEED:  5f           clrx   
   DEEE:  a603         lda    #$03
-  DEF0:  cddccb       jsr    $DCCB
-  DEF3:  cdddfe       jsr    $DDFE
+  DEF0:  cddccb       jsr    LinErr_Report
+  DEF3:  cdddfe       jsr    LinSci_RxOn
   DEF6:  6e0fb1       mov    #$0F, $B1
   DEF9:  ccdfb3       jmp    $DFB3
 LDEFC:
@@ -3707,7 +3707,7 @@ LDF02:
   DF03:  e601         lda    1,x
   DF05:  c701d8       sta    $01D8
   DF08:  5f           clrx   
-  DF09:  cddad9       jsr    $DAD9
+  DF09:  cddad9       jsr    LinSched_OnHeader
   DF0C:  ccdfb3       jmp    $DFB3
 LDF0F:
   DF0F:  55b2         ldhx   $B2
@@ -3733,7 +3733,7 @@ LDF0F:
   DF31:  b7b4         sta    $B4
   DF33:  207e         bra    LDFB3
 LDF35:
-  DF35:  cdde88       jsr    $DE88
+  DF35:  cdde88       jsr    LinCrc_Fold
   DF38:  b6b5         lda    $B5
   DF3A:  43           coma   
   DF3B:  5f           clrx   
@@ -3743,12 +3743,12 @@ LDF35:
 LDF44:
   DF44:  5f           clrx   
   DF45:  a611         lda    #$11
-  DF47:  cddccb       jsr    $DCCB
-  DF4A:  cdddfe       jsr    $DDFE
+  DF47:  cddccb       jsr    LinErr_Report
+  DF4A:  cdddfe       jsr    LinSci_RxOn
   DF4D:  6e0fb1       mov    #$0F, $B1
   DF50:  2061         bra    LDFB3
 LDF52:
-  DF52:  cdddfe       jsr    $DDFE
+  DF52:  cdddfe       jsr    LinSci_RxOn
   DF55:  6e0fb1       mov    #$0F, $B1
   DF58:  b6b5         lda    $B5
   DF5A:  43           coma   
@@ -3757,7 +3757,7 @@ LDF52:
   DF5E:  2608         bne    LDF68
   DF60:  5f           clrx   
   DF61:  a602         lda    #$02
-  DF63:  cddbb7       jsr    $DBB7
+  DF63:  cddbb7       jsr    LinDiag_Response
   DF66:  204b         bra    LDFB3
 LDF68:
   DF68:  5f           clrx   
@@ -3768,7 +3768,7 @@ LDF6D:
   DF6F:  2606         bne    LDF77
   DF71:  5f           clrx   
   DF72:  a60b         lda    #$0B
-  DF74:  cdca41       jsr    $CA41
+  DF74:  cdca41       jsr    LinErr_Set
 LDF77:
   DF77:  b6b5         lda    $B5
   DF79:  95           tsx    
@@ -3786,9 +3786,9 @@ LDF77:
   DF8F:  6e09b7       mov    #$09, $B7
   DF92:  201f         bra    LDFB3
 LDF94:
-  DF94:  cdddfe       jsr    $DDFE
+  DF94:  cdddfe       jsr    LinSci_RxOn
   DF97:  6e0fb1       mov    #$0F, $B1
-  DF9A:  cdde88       jsr    $DE88
+  DF9A:  cdde88       jsr    LinCrc_Fold
   DF9D:  b6b5         lda    $B5
   DF9F:  43           coma   
   DFA0:  95           tsx    
@@ -3796,13 +3796,13 @@ LDF94:
   DFA3:  2608         bne    LDFAD
   DFA5:  5f           clrx   
   DFA6:  a601         lda    #$01
-  DFA8:  cddbb7       jsr    $DBB7
+  DFA8:  cddbb7       jsr    LinDiag_Response
   DFAB:  2006         bra    LDFB3
 LDFAD:
   DFAD:  5f           clrx   
   DFAE:  a614         lda    #$14
 LDFB0:
-  DFB0:  cddccb       jsr    $DCCB
+  DFB0:  cddccb       jsr    LinErr_Report
 LDFB3:
   DFB3:  a702         ais    #$02
   DFB5:  81           rts    
@@ -3825,11 +3825,11 @@ LDFB3:
   DFD3:  41ff08       cbeqa  #$FF, LDFDE
   DFD6:  5f           clrx   
   DFD7:  a60b         lda    #$0B
-  DFD9:  cdca41       jsr    $CA41
+  DFD9:  cdca41       jsr    LinErr_Set
   DFDC:  204b         bra    LE029
 LDFDE:
-  DFDE:  cdddfe       jsr    $DDFE
-  DFE1:  cddad7       jsr    $DAD7
+  DFDE:  cdddfe       jsr    LinSci_RxOn
+  DFE1:  cddad7       jsr    Lin_GotoSleep2
   DFE4:  2043         bra    LE029
 LDFE6:
   DFE6:  95           tsx    
@@ -3845,7 +3845,7 @@ LDFF4:
   DFF4:  5f           clrx   
   DFF5:  a612         lda    #$12
 LDFF7:
-  DFF7:  cddccb       jsr    $DCCB
+  DFF7:  cddccb       jsr    LinErr_Report
   DFFA:  9ee602       lda    2,s
   DFFD:  a102         cmp    #$02
   DFFF:  2622         bne    LE023
@@ -3862,14 +3862,14 @@ LE00E:
   E013:  2608         bne    LE01D
   E015:  5f           clrx   
   E016:  a613         lda    #$13
-  E018:  cddccb       jsr    $DCCB
+  E018:  cddccb       jsr    LinErr_Report
   E01B:  20e4         bra    LE001
 LE01D:
   E01D:  5f           clrx   
   E01E:  a613         lda    #$13
-  E020:  cddccb       jsr    $DCCB
+  E020:  cddccb       jsr    LinErr_Report
 LE023:
-  E023:  cdddfe       jsr    $DDFE
+  E023:  cdddfe       jsr    LinSci_RxOn
   E026:  6e0fb1       mov    #$0F, $B1
 LE029:
   E029:  a702         ais    #$02
