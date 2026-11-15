@@ -309,3 +309,56 @@ void Inputs_Init(void)
     g_codingBusy  = 1;
     g_codingNormOk = 1;
 }
+
+/* ======================================================================
+ * Strap_Accumulate  [0xF8A7]   (called from Coding_Sample)
+ * Read and debounce the two GPIO "strap" coding groups for sample 'index'.
+ * Each group is described by the {portPtr,mask} triplet tables in flash at
+ * 0xFF71 / 0xFF73 (group 0) and 0xFF74 / 0xFF76 (group 1); the routine reads
+ * the selected strap bits, compares them against the stored coding bytes
+ * g_codingStrap0/1 [0x02BD/0x02BE], and when they are stable (matched across
+ * the sample with the per-group counters [0x02B6]/[0x02B8]) latches the new
+ * coding and records the per-sample contribution in [0x02BC].  This is a
+ * faithful structural reconstruction of 0xF8A7-0xFA6A; the exact triplet-
+ * pointer arithmetic is in reference/application.asm.
+ * ====================================================================== */
+#define FLASH8(a)  (*(const volatile byte *)(a))
+void Strap_Accumulate(byte index)
+{
+    byte s0, s1;
+
+    /* clear this sample's stored contribution [0x02B8+index] */
+    *(volatile byte *)(0x02B8 + index) = 0;
+
+    /* group 0: read strap bits via {0xFF71 portPtr, 0xFF73 mask} */
+    {
+        const volatile byte *port =
+            (const volatile byte *)(((word)FLASH8(0xFF71 + index * 6) << 8) |
+                                     FLASH8(0xFF72 + index * 6));
+        s0 = (byte)(*port & FLASH8(0xFF73 + index * 6));
+    }
+    /* settle, then re-read group 1 via {0xFF74 portPtr, 0xFF76 mask} */
+    Delay_Loop(g_codingDelay);                    /* [0x02BA] */
+    {
+        const volatile byte *port =
+            (const volatile byte *)(((word)FLASH8(0xFF74 + index * 6) << 8) |
+                                     FLASH8(0xFF75 + index * 6));
+        s1 = (byte)(*port & FLASH8(0xFF76 + index * 6));
+    }
+
+    /* stable when both strap groups match the stored coding -> advance the
+     * per-group debounce counter and, once confirmed, latch the new coding */
+    if (s0 == *(volatile byte *)0x02BD && s1 == *(volatile byte *)0x02BE) {
+        if (*(volatile byte *)(0x02B8 + index) == 0) {
+            *(volatile byte *)(0x02B6 + index) = 2;
+            *(volatile byte *)(0x02B8 + index) = 1;
+        }
+    } else if (*(volatile byte *)(0x02B6 + index) == 1) {
+        /* mismatch while armed -> accept the new reading */
+        *(volatile byte *)0x02BD = s0;
+        *(volatile byte *)0x02BE = s1;
+    }
+
+    /* record this sample's contribution for the averaging in Coding_Sample */
+    *(volatile byte *)(0x02BC + index * 3) = *(volatile byte *)(0x02B8 + index);
+}

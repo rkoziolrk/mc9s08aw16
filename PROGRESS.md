@@ -88,9 +88,26 @@ against this image's asm.
 - [x] Shared helpers -> filters.c: Filter_Avg 0xF4AB (slew-rate limiter),
       Table_Interp 0xF535 (piecewise-linear NTC->level curve), Btn_Dispatch
       0xFCD8 (indirect handler trampoline).
-- [ ] Remaining LIN transport-core helpers as externs: D191/E037/D722/D65A/
-      D17B/E02C/D6D2/C841/D136/D14E; sub_CA54; E188; Strap_Accumulate F8A7
-      body; the detailed ISO-TP RxFrame/TxFrame byte handling; E78B init.
+- [x] LIN transport core -> lin_core.c: critical section (Lin_CritEnter/Exit
+      0xD136/0xD14E), scheduled-response timer (LinSched_Reset/Tick/Arm/Busy/
+      Abort 0xD17B/0xD191/0xD1C6/0xD1FB/0xD61D), frame plumbing (LinFrame_*
+      0xE02C/0xE037/0xE083/0xE0AE/0xE0EC/0xE114/0xE11E), node state
+      (LinNode_InitState/Reset/SetMode/SchedTick/Rearm/Wake/InitFrames* 0xD65A/
+      0xD67F/0xD6D2/0xD722/0xDAB6/0xDAC5/0xDA3D/0xDA78), ISO-TP rx/tx
+      (LinTp_RxFrame/TxFrame/TxStep 0xD20D/0xD44C/0xD5C7), management responses
+      (LinApp_SendError 0xCA54, Lin_SleepArm/Check 0xCA6B/0xCA75,
+      LinDiag_AutoConfig 0xCA87, Lin_SendWakeup 0xDE08), Lin_ResetState 0xCD1B,
+      and the buffer helpers (Buf_Copy 0xE188 / Fill 0xE13A / Clear 0xE15C /
+      CopyIdx 0xE1C6).
+- [x] Math runtime -> runtime.c: rt_div8/mul_setup/scale16/scale_fold/cmp_fp
+      (0xFD08/0xFE2A/0xFD5B/0xFE77/0xFDFC) - CodeWarrior fixed-point helpers.
+- [x] Strap_Accumulate 0xF8A7 (GPIO strap coding read/debounce) -> inputs.c;
+      Nvm_RequestSave 0xC841 -> nvm.c.
+
+**All application symbols are now defined - no sub_XXXX placeholders remain.**
+Remaining as documented structural reconstructions (not bit-exact): the ISO-TP
+rx/tx byte arithmetic, the fixed-point math runtime, and Nvm_Process's
+erase/program state-machine body (the flash sequencing is in the asm).
 - [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
       F607 CC56 EABE  (+ helper bodies Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7)
 

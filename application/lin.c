@@ -44,6 +44,9 @@ void Sci_SendByte(byte data)
     (void)dummy;
 }
 
+void Lin_RxByte(byte data);        /* [0xDEA6] fwd */
+void Lin_TxByteOrErr(byte event);  /* [0xDFB6] fwd */
+
 /* ======================================================================
  * Isr_Sci1  [0xCF46]  (SCI1 receive / error interrupt)
  * Reads S1 and the data register, then:

@@ -159,3 +159,49 @@ void NvmTask_Run(void)
     }
     ExitCritical();
 }
+
+/* ======================================================================
+ * Nvm_RequestSave  [0xC841]   (called from Power_Task, 0xC5BC)
+ * Queue a configuration save on a bus-timeout ([0x026A]==1) when none is
+ * already pending ([0x01AE]).  Picks the active bank ([0x01A7]: 1 = bank A at
+ * 0xC200, 2 = bank B at 0xC000), advances that bank's write counter
+ * ([0x01AA]/[0x01A8], guarded to < 0x0086), mirrors it into the page image
+ * ([0x019F]/[0x0120]) and sets the write source [0x01AC] to the bank base so
+ * the background NvmTask_Run picks it up.
+ * ====================================================================== */
+void Nvm_RequestSave(void)
+{
+    if (*(volatile byte *)0x026A != 1) {
+        return;                         /* only on a bus-timeout event */
+    }
+    if (*(volatile byte *)0x01AE != 0) {
+        return;                         /* a save is already pending */
+    }
+    *(volatile byte *)0x01AE = 1;
+
+    if (*(volatile byte *)0x01A7 == 1) {            /* bank A (0xC200) */
+        word c = ((word)(*(volatile byte *)0x01AA) << 8) | *(volatile byte *)0x01AB;
+        if (c < 0x0086) {
+            c--;
+            *(volatile byte *)0x01AA = (byte)(c >> 8);
+            *(volatile byte *)0x01AB = (byte)c;
+            *(volatile byte *)0x019F = (byte)(c >> 8);
+            *(volatile byte *)0x0120 = (byte)c;
+            *(volatile byte *)0x01AC = 0xC2;        /* source hi = 0xC2xx */
+            *(volatile byte *)0x01AD = 0x00;
+            return;
+        }
+    }
+    if (*(volatile byte *)0x01A7 == 2) {            /* bank B (0xC000) */
+        word c = ((word)(*(volatile byte *)0x01A8) << 8) | *(volatile byte *)0x01A9;
+        if (c < 0x0086) {
+            c--;
+            *(volatile byte *)0x01A8 = (byte)(c >> 8);
+            *(volatile byte *)0x01A9 = (byte)c;
+            *(volatile byte *)0x019F = (byte)(c >> 8);
+            *(volatile byte *)0x0120 = (byte)c;
+            *(volatile byte *)0x01AC = 0xC0;        /* source hi = 0xC0xx */
+            *(volatile byte *)0x01AD = 0x00;
+        }
+    }
+}

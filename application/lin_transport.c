@@ -17,7 +17,7 @@
 #define g_linRxState R8(0x00B7)
 
 extern void Sci_SendByte(byte data);
-extern void mem_copy(byte *dst, const byte *src, word count);
+extern void Buf_Copy(byte *dst, const byte *src, word count);   /* [0xE188] lin_core.c */
 
 /* ======================================================================
  * LinCrc_Fold  [0xDE88]  fold the 16-bit running sum (0x00B4:0x00B5) into
@@ -110,11 +110,11 @@ void LinSched_OnHeader(byte pid)
 #define wk_reload   R8(0x01E3)  /* wake-timer reload                        */
 
 /* transport-core helpers reconstructed elsewhere / referenced by address */
-extern void Lin_TickHelper(void);  /* [0xD136] */
-extern void Lin_CritTail(void);    /* [0xD14E] */
-void   sub_CA54(byte code);        /* [0xCA54] set error + default level */
-void   sub_D61D(void);             /* [0xD61D] */
-void   sub_DE08(void);             /* [0xDE08] */
+extern void Lin_CritEnter(void);  /* [0xD136] lin_core.c */
+extern void Lin_CritExit(void);   /* [0xD14E] lin_core.c */
+extern void LinApp_SendError(byte code); /* [0xCA54] lin_core.c */
+extern void LinSched_Abort(void);        /* [0xD61D] lin_core.c */
+extern void Lin_SendWakeup(void);        /* [0xDE08] lin_core.c */
 
 /* ======================================================================
  * LinErr_Report  [0xDCCB]
@@ -123,7 +123,7 @@ void   sub_DE08(void);             /* [0xDE08] */
  * active frame; a diagnostic-request slot (4) or response slot (5) advances
  * the ISO-TP state ($B8/$B9/$01D9) and the recognised service errors
  * (0x11/0x12 -> 0x08, 0x13 -> 0x09, 0x14 -> 0x07, 0x16 -> 0x02) are reported
- * through sub_CA54; a bus error (0x05/0x07) reports code 0x01.  Marks the
+ * through LinApp_SendError; a bus error (0x05/0x07) reports code 0x01.  Marks the
  * diagnostic frame's status byte (0xFEE7[7] |= 0x80).
  * ====================================================================== */
 void LinErr_Report(byte code)
@@ -133,7 +133,7 @@ void LinErr_Report(byte code)
     if ((code & 0xF0) == 0) {
         /* bus-level error */
         if (code == 0x05 || code == 0x07) {
-            sub_CA54(0x01);                /* report generic bus error */
+            LinApp_SendError(0x01);                /* report generic bus error */
         }
         return;
     }
@@ -151,22 +151,22 @@ void LinErr_Report(byte code)
         if (tp_sub == 0x02) tp_flag = 0;
         if (tp_sub == 0x03 || tp_mode == 0x03) {
             tp_mode = 0x02;
-            sub_D61D();
+            LinSched_Abort();
         }
         tp_sub = 0x02;
     } else if (idx == 0x05) {              /* diagnostic response slot */
         if (tp_sub == 0x03) {
             tp_mode = 0x02;
-            sub_D61D();
+            LinSched_Abort();
         }
         if (tp_sub == 0x02) tp_flag = 0;
     }
 
     switch (code) {
-    case 0x11: case 0x12: sub_CA54(0x08); break;   /* [0xDD36] */
-    case 0x13:            sub_CA54(0x09); break;   /* [0xDD3E] */
-    case 0x14:            sub_CA54(0x07); break;   /* [0xDD46] */
-    case 0x16:            sub_CA54(0x02); break;   /* [0xDD4E] */
+    case 0x11: case 0x12: LinApp_SendError(0x08); break;   /* [0xDD36] */
+    case 0x13:            LinApp_SendError(0x09); break;   /* [0xDD3E] */
+    case 0x14:            LinApp_SendError(0x07); break;   /* [0xDD46] */
+    case 0x16:            LinApp_SendError(0x02); break;   /* [0xDD4E] */
     default: break;
     }
 }
@@ -175,9 +175,9 @@ void LinErr_Report(byte code)
  * LinDiag_Response  [0xDBB7]
  * Frame-complete dispatcher for the diagnostic transport.  For a publish
  * frame (direction nibble) it copies the mapped signal buffer (0xFEE1/0xFEE2
- * tables) out through sub_E188 and OR-marks the TX ready flags (0x00C8); for
- * a subscribe/diagnostic frame it runs the ISO-TP receive step (sub_D7CC /
- * sub_D20D) advancing the mode ($01D9) and sub-state ($B8).  This is a
+ * tables) out through Buf_Copy and OR-marks the TX ready flags (0x00C8); for
+ * a subscribe/diagnostic frame it runs the ISO-TP receive step (Lin_FrameMatch /
+ * LinTp_RxFrame) advancing the mode ($01D9) and sub-state ($B8).  This is a
  * structural reconstruction of 0xDBB7-0xDCCA; the per-table arithmetic is in
  * reference/application.asm.
  * ====================================================================== */
@@ -193,14 +193,14 @@ void LinDiag_Response(byte kind)
         } else {
             R8(0x00C6) |= FLASH8(0xFEF4);
             if (tp_sub == 0x02) tp_flag = 0;
-            if (tp_sub == 0x03) { sub_D61D(); tp_sub = 0x02; }
+            if (tp_sub == 0x03) { LinSched_Abort(); tp_sub = 0x02; }
         }
         return;
     }
 
     /* subscribe / diagnostic receive path [0xDBCD] */
     if (idx < 4) {
-        /* copy the mapped signal buffer (0xFEE1/0xFEE2 -> E188) */
+        /* copy the mapped signal buffer (0xFEE1/0xFEE2 -> Buf_Copy) */
         R8(0x00C8) |= FLASH8(0xFEEC + idx);
         return;
     }
@@ -209,7 +209,7 @@ void LinDiag_Response(byte kind)
     }
     /* idx 4/5: diagnostic request/response ISO-TP step */
     R8(0x00C8) |= FLASH8(0xFEEE);
-    /* sub_D7CC / sub_D20D advance the ISO-TP state; result selects the
+    /* Lin_FrameMatch / LinTp_RxFrame advance the ISO-TP state; result selects the
      * next mode ($01D9) / sub-state ($B8). See the asm for the detail. */
 }
 
@@ -226,7 +226,7 @@ void LinDiag_Response(byte kind)
  * ====================================================================== */
 void LinTp_Timer(void)
 {
-    Lin_TickHelper();                      /* [0xD136] */
+    Lin_CritEnter();                      /* [0xD136] */
 
     /* --- transport timeout timer --- */
     if (tp_state == 0x11) {
@@ -267,7 +267,7 @@ void LinTp_Timer(void)
                 wk_state++;
                 wk_count = 0x97;
                 LinSci_RxOff();            /* [0xDE04] */
-                sub_DE08();                /* [0xDE08] */
+                Lin_SendWakeup();          /* [0xDE08] */
             } else if (wk_state == 0x13) {
                 wk_state   = 0;
                 wk_timerLo = 0x3D;         /* enter sleep window */
@@ -275,7 +275,7 @@ void LinTp_Timer(void)
         }
     }
 
-    Lin_CritTail();                        /* [0xD14E] */
+    Lin_CritExit();                        /* [0xD14E] */
 }
 
 /* ======================================================================

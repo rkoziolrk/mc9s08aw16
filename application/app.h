@@ -46,12 +46,48 @@ void Task_25Ticks(void);    /* [0xC6B7] */
 /* Hardware / module init (reconstructed in their own files; see PROGRESS.md) */
 void Ports_Init(void);      /* [0xF28E] */
 void Nvm_Init(void);        /* [0xC7DB] */
+void Nvm_RequestSave(void); /* [0xC841] */
 byte Nvm_Process(void);     /* [0xC8AF] */
 void Flash_BurstProgram(void);/* [0xC400] */
 void Flash_ErasePage(void); /* [0xC464] */
 word Nvm_Checksum(const word *p, word count);
 void Tpm1_Init(void);       /* [0xC792] */
 void Tpm2_Init(void);       /* [0xC7B6] */
+
+/* lin_core.c - LIN transport core (crit section, schedule, ISO-TP, node) */
+void Lin_CritEnter(void);        /* [0xD136] */
+void Lin_CritExit(void);         /* [0xD14E] */
+void LinSched_Reset(void);       /* [0xD17B] */
+void LinSched_Tick(void);        /* [0xD191] */
+void LinSched_Arm(byte type, word len); /* [0xD1C6] */
+byte LinSched_Busy(void);        /* [0xD1FB] */
+void LinSched_Abort(void);       /* [0xD61D] */
+void LinFrame_SetIdle(void);     /* [0xE02C] */
+void LinFrame_RxStep(void);      /* [0xE037] */
+void LinFrame_Begin(byte pid, byte arg); /* [0xE083] */
+byte LinFrame_Classify(byte nad, word len); /* [0xE0AE] */
+byte LinFrame_Abort(byte arg);   /* [0xE0EC] */
+byte LinFrame_Done(void);        /* [0xE114] */
+void LinFrame_Dispatch(void);    /* [0xE11E] */
+void Lin_ResetState(void);       /* [0xCD1B] */
+void LinNode_InitState(void);    /* [0xD65A] */
+void LinNode_Reset(void);        /* [0xD67F] */
+byte LinNode_SetMode(byte mode); /* [0xD6D2] */
+void LinNode_SchedTick(void);    /* [0xD722] */
+void LinNode_Rearm(void);        /* [0xDAB6] */
+void LinNode_Wake(void);         /* [0xDAC5] */
+byte LinTp_RxFrame(const byte *buf); /* [0xD20D] */
+void LinTp_TxFrame(byte *buf);   /* [0xD44C] */
+byte LinTp_TxStep(void);         /* [0xD5C7] */
+void LinApp_SendError(byte code);/* [0xCA54] */
+void Lin_SleepArm(void);         /* [0xCA6B] */
+void Lin_SleepCheck(void);       /* [0xCA75] */
+void LinDiag_AutoConfig(void);   /* [0xCA87] */
+void Lin_SendWakeup(void);       /* [0xDE08] */
+void Buf_Copy(byte *dst, const byte *src, word count);  /* [0xE188] */
+void Buf_Fill(byte *dst, byte value, word count);       /* [0xE13A] */
+void Buf_Clear(byte *dst, word count);                  /* [0xE15C] */
+void Buf_CopyIdx(byte *dst, const byte *src, word count);/* [0xE1C6] */
 
 /* lin.c */
 void Sci_Init(void);        /* [0xCF10] */

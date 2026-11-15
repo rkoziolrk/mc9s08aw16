@@ -50,13 +50,13 @@ extern byte g_statCount AT(0x01B6);   /* saturating status counter */
 
 /* ---- LIN transport core (reconstructed elsewhere; externs for now) ---- */
 void   Lin_ResetState(void);   /* [0xCD1B] */
-void   sub_D65A(void);
-void   sub_D17B(void);
-void   sub_E02C(void);
-void   sub_E037(void);
-void   sub_D191(void);
-void   sub_D722(void);
-byte   sub_D6D2(byte arg);
+void   LinNode_InitState(void);   /* [0xD65A] lin_core.c */
+void   LinSched_Reset(void);       /* [0xD17B] lin_core.c */
+void   LinFrame_SetIdle(void);     /* [0xE02C] lin_core.c */
+void   LinFrame_RxStep(void);      /* [0xE037] lin_core.c */
+void   LinSched_Tick(void);        /* [0xD191] lin_core.c */
+void   LinNode_SchedTick(void);    /* [0xD722] lin_core.c */
+byte   LinNode_SetMode(byte mode); /* [0xD6D2] lin_core.c */
 
 /* ======================================================================
  * LinApp_DecodeCommand  [0xCC7E]   (called from Task_10Ticks slots 0/2/4/6/8)
@@ -98,7 +98,7 @@ void Supervise_Tick(void)
 
 /* ======================================================================
  * Supervise_Task  [0xCCD3]   (called from Task_25Ticks)
- * Run the LIN schedule tick (sub_D722), bump the saturating status counter
+ * Run the LIN schedule tick (LinNode_SchedTick), bump the saturating status counter
  * [0x01B6], and if the no-activity timer [0x01B3:0x01B4] has passed the
  * configured limit [0x0191:0x0192] raise the bus-timeout flag (g_linFlags b0).
  * ====================================================================== */
@@ -106,7 +106,7 @@ void Supervise_Task(void)
 {
     word limit, elapsed;
 
-    sub_D722();                            /* [0xD722] LIN schedule tick */
+    LinNode_SchedTick();                            /* [0xD722] LIN schedule tick */
 
     if (g_statCount < 0xFF) {
         g_statCount++;
@@ -121,13 +121,13 @@ void Supervise_Task(void)
 
 /* ======================================================================
  * Lin_Housekeep  [0xCD0A]   (called from Task_10Ticks)
- * Per-10ms LIN housekeeping: run the receive/frame step (sub_E037) then the
- * schedule/response handler (sub_D191).
+ * Per-10ms LIN housekeeping: run the receive/frame step (LinFrame_RxStep) then the
+ * schedule/response handler (LinSched_Tick).
  * ====================================================================== */
 void Lin_Housekeep(void)
 {
-    sub_E037();                /* [0xE037] */
-    sub_D191();                /* [0xD191] */
+    LinFrame_RxStep();                /* [0xE037] */
+    LinSched_Tick();                /* [0xD191] */
 }
 
 /* ======================================================================
@@ -141,11 +141,11 @@ void LinApp_Init(void)
     *(volatile byte *)0x01B7 = 0;
     EnterCritical();
     Lin_ResetState();          /* [0xCD1B] */
-    sub_D65A();                /* [0xD65A] */
-    sub_D17B();                /* [0xD17B] */
-    sub_E02C();                /* [0xE02C] */
+    LinNode_InitState();                /* [0xD65A] */
+    LinSched_Reset();                /* [0xD17B] */
+    LinFrame_SetIdle();                /* [0xE02C] */
     g_linFlags &= (byte)~0x04; /* clear comms-error latch */
-    sub_D6D2(2);               /* [0xD6D2] */
+    LinNode_SetMode(2);               /* [0xD6D2] */
     ExitCritical();
 }
 

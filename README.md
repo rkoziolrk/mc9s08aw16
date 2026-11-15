@@ -19,11 +19,14 @@ LIN bootloader** (reset vector → 0xC4C0 directly).
 > acquisition, the detection/excitation engine, the button scan + debounce
 > and the published button/scroll signals, the backlight PWM, heating, the
 > reset log + background self-tests, the LIN application layer (command decode
-> + supervision) and the LIN transport timers/diagnostics/autobaud. A handful
-> of LIN transport-core leaf helpers remain as documented externs (see
-> `PROGRESS.md`). `reference/application.asm` is the full symbol-annotated
-> disassembly and the byte-exact ground truth; `make check` compiles every
-> source as well-formed C (host gcc).
+> + supervision) and the full LIN transport core (critical section, scheduled
+> responses, ISO-TP receive/transmit, node state machine, timers, diagnostics
+> and autobaud). Every application symbol is reconstructed — no placeholders.
+> The deepest ISO-TP byte arithmetic, the fixed-point math runtime and the
+> flash erase/program sequencing are faithful *structural* reconstructions
+> (not claimed bit-identical). `reference/application.asm` is the full
+> symbol-annotated disassembly and the byte-exact ground truth; `make check`
+> compiles every source as well-formed C (host gcc).
 
 ## Module coverage
 
@@ -45,7 +48,9 @@ LIN bootloader** (reset vector → 0xC4C0 directly).
 | `power.c` | STOP sleep entry + power/bus-timeout task |
 | `lin.c` | SCI/LIN byte engines + TPM2-capture autobaud |
 | `lin_app.c` | LIN command decode + node supervision |
-| `lin_transport.c` | LIN schedule/diagnostics + ISO-TP timers |
+| `lin_transport.c` | LIN header dispatch + diagnostics + ISO-TP timers |
+| `lin_core.c` | LIN transport core: crit section, schedule, ISO-TP rx/tx, node state |
+| `runtime.c` | CodeWarrior fixed-point math runtime helpers |
 | `filters.c` | slew-rate filter, table interpolation, dispatch trampoline |
 | `util.c` | critical sections, delay, modulo helper |
 
