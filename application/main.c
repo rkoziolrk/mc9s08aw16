@@ -85,15 +85,15 @@ void App_InitAll(void)
     sub_E78B();             /* [0xE78B] */
     Coding_Reset();         /* [0xE271] reset normalised coding value       */
     sub_F3F1();             /* [0xF3F1] */
-    sub_EA88();             /* [0xEA88] */
-    sub_E7CF();             /* [0xE7CF] */
+    Buttons_StateInit();    /* [0xEA88] button output/event state init       */
+    Buttons_Init();         /* [0xE7CF] button debounce array init           */
     sub_E229();             /* [0xE229] */
     Coding_Calibrate();     /* [0xF73F] build strap coding + delays          */
     Coding_Probe();         /* [0xE2FB] coding validity + plausibility probe */
     Detect_Init();          /* [0xE517] detect/scan engine init             */
     sub_F607();             /* [0xF607] */
     sub_CC56();             /* [0xCC56] */
-    sub_EABE();             /* [0xEABE] */
+    Buttons_Calibrate();    /* [0xEABE] ladder reference calibration         */
     ExitCritical();         /* [0xF5F3] (jmp tail) */
 }
 

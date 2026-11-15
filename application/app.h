@@ -88,11 +88,18 @@ byte Meas_LowSide(void);         /* [0xE6E4] */
 byte Meas_HighSide(void);        /* [0xE67F] */
 void Meas_Ladder2(void);         /* [0xE729] */
 
+/* buttons.c - steering-wheel button scan + debounce */
+void Buttons_Init(void);         /* [0xE7CF] */
+void Buttons_Scan(void);         /* [0xE7F8] from Task_10Ticks */
+void Buttons_StateInit(void);    /* [0xEA88] */
+void Buttons_Calibrate(void);    /* [0xEABE] */
+byte Button_ReadWindow(byte channel, byte lo, byte hi);  /* [0xE90E] */
+
 /* Init-list targets not yet individually reconstructed (placeholder externs
  * so main.c links; each becomes a real module in a later pass). */
 void sub_FA6B(void); void sub_E78B(void);
-void sub_F3F1(void); void sub_EA88(void); void sub_E7CF(void); void sub_E229(void);
+void sub_F3F1(void); void sub_E229(void);
 void sub_F607(void);
-void sub_CC56(void); void sub_EABE(void);
+void sub_CC56(void);
 
 #endif /* APP_H */

@@ -40,7 +40,12 @@ against this image's asm.
       helpers (Meas_ClearStatus E65C, Meas_LadderRatio E661, Meas_LowSide E6E4,
       Meas_HighSide E67F, Meas_Ladder2 E729). Drives PTE2/PTF4, ADC ch 0x0A
       (coding) + ch 0x02 (ladder).
-- [ ] Buttons / backlight / scroll output stage, supply, heating, diag, selftest
+- [x] Buttons -> buttons.c: Buttons_Init 0xE7CF, Buttons_Scan 0xE7F8
+      (from Task_10Ticks), Button_Debounce 0xE814/0xE889, Button_ReadWindow
+      0xE90E, Buttons_StateInit 0xEA88, Buttons_Calibrate 0xEABE. 4 GPIO
+      buttons on port C (table 0xFF25) + 12 ADC-ladder buttons on ch 0/1/8/9
+      (table 0xFF35), handlers 0xE929..0xEA6C via 0xFCD8 trampoline.
+- [ ] Backlight / scroll output stage, supply, heating, diag, selftest
 - [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
       F607 CC56 EABE  (+ helper bodies Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7)
 
