@@ -54,6 +54,10 @@ void Sci_Init(void);        /* [0xCF10] */
 void Sci_SendByte(byte data);/* [0xCF36] */
 INTERRUPT void Isr_Sci1(void);/* [0xCF46] */
 
+/* sensor.c */
+void Sensor_Init(void);     /* [0xE229] */
+byte Adc_Read(byte channel);/* [0xE246] */
+
 /* Init-list targets not yet individually reconstructed (placeholder externs
  * so main.c links; each becomes a real module in a later pass). */
 void sub_F690(void); void sub_FA6B(void); void sub_E78B(void); void sub_E271(void);

@@ -4,7 +4,7 @@
 
 
 ;---------------------------------------------------------------
-; sub_C400   [0xC400]   <- C913, C934, C950
+; Flash_BurstProgram   [0xC400]   <- C913, C934, C950
 ;---------------------------------------------------------------
   C400:  a6aa         lda    #$AA
   C402:  c71800       sta    SRS
@@ -28,9 +28,9 @@ LC41B:
 ;   .... data/gap C424-C464 ....
 
 ;---------------------------------------------------------------
-; sub_C464   [0xC464]   <- C8EF
+; Flash_ErasePage   [0xC464]   <- C8EF
 ;---------------------------------------------------------------
-  C464:  074afd       brclr  3, ICGS1, LC464
+  C464:  074afd       brclr  3, ICGS1, Flash_ErasePage
   C467:  c61825       lda    FSTAT
   C46A:  aa10         ora    #$10
   C46C:  c71825       sta    FSTAT
@@ -157,7 +157,7 @@ LC53F:
   C556:  cdc739       jsr    COP_Feed
   C559:  cdf28e       jsr    Ports_Init
   C55C:  cdc7db       jsr    Nvm_Init
-  C55F:  cdf690       jsr    $F690
+  C55F:  cdf690       jsr    Inputs_Init
   C562:  cdc7b6       jsr    Tpm2_Init
   C565:  cdc739       jsr    COP_Feed
   C568:  cdc792       jsr    Tpm1_Init
@@ -167,7 +167,7 @@ LC53F:
   C574:  cdf3f1       jsr    $F3F1
   C577:  cdea88       jsr    $EA88
   C57A:  cde7cf       jsr    $E7CF
-  C57D:  cde229       jsr    $E229
+  C57D:  cde229       jsr    Sensor_Init
   C580:  cdf73f       jsr    $F73F
   C583:  cde2fb       jsr    $E2FB
   C586:  cde517       jsr    $E517
@@ -404,7 +404,7 @@ LC6E1:
   C702:  2530         bcs    LC734
   C704:  cdf375       jsr    $F375
   C707:  cdf5e6       jsr    EnterCritical
-  C70A:  cdc8af       jsr    $C8AF
+  C70A:  cdc8af       jsr    Nvm_Process
   C70D:  95           tsx    
   C70E:  f7           sta    ,x
   C70F:  271b         beq    LC72C
@@ -639,7 +639,7 @@ LC8AC:
   C8AC:  ccc5ca       jmp    $C5CA
 
 ;---------------------------------------------------------------
-; sub_C8AF   [0xC8AF]   <- C70A
+; Nvm_Process   [0xC8AF]   <- C70A
 ;---------------------------------------------------------------
   C8AF:  a7fd         ais    #$FD
   C8B1:  95           tsx    
@@ -672,7 +672,7 @@ LC8D6:
   C8E9:  ccc978       jmp    $C978
 LC8EC:
   C8EC:  cdf5e6       jsr    EnterCritical
-  C8EF:  cdc464       jsr    $C464
+  C8EF:  cdc464       jsr    Flash_ErasePage
   C8F2:  cdf5f3       jsr    ExitCritical
   C8F5:  a615         lda    #$15
   C8F7:  95           tsx    
@@ -688,7 +688,7 @@ LC8FE:
   C90C:  cdf5e6       jsr    EnterCritical
   C90F:  4f           clra   
   C910:  c700aa       sta    $00AA
-  C913:  cdc400       jsr    $C400
+  C913:  cdc400       jsr    Flash_BurstProgram
   C916:  a601         lda    #$01
   C918:  c700aa       sta    $00AA
   C91B:  ce01ac       ldx    $01AC
@@ -703,7 +703,7 @@ LC924:
   C92C:  c700a9       sta    $00A9
   C92F:  a67f         lda    #$7F
   C931:  c700a4       sta    $00A4
-  C934:  cdc400       jsr    $C400
+  C934:  cdc400       jsr    Flash_BurstProgram
   C937:  a601         lda    #$01
   C939:  c700aa       sta    $00AA
   C93C:  c601ac       lda    $01AC
@@ -714,7 +714,7 @@ LC924:
   C948:  c700a9       sta    $00A9
   C94B:  a6ff         lda    #$FF
   C94D:  c700a4       sta    $00A4
-  C950:  cdc400       jsr    $C400
+  C950:  cdc400       jsr    Flash_BurstProgram
   C953:  cdf5f3       jsr    ExitCritical
   C956:  a60b         lda    #$0B
   C958:  95           tsx    
@@ -4159,7 +4159,7 @@ LE1EB:
 ;   .... data/gap E1F3-E229 ....
 
 ;---------------------------------------------------------------
-; sub_E229   [0xE229]   <- C57D
+; Sensor_Init   [0xE229]   <- C57D
 ;---------------------------------------------------------------
   E229:  a641         lda    #$41
   E22B:  c70016       sta    ADC1CFG
@@ -4176,7 +4176,7 @@ LE1EB:
   E245:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_E246   [0xE246]   <- E2FF, E692, E6A1, E6EC, E6FB, E72F, E73E, E768
+; Adc_Read   [0xE246]   <- E2FF, E692, E6A1, E6EC, E6FB, E72F, E73E, E768
 ;---------------------------------------------------------------
   E246:  87           psha   
   E247:  89           pshx   
@@ -4292,7 +4292,7 @@ LE2F2:
   E2FB:  87           psha   
   E2FC:  5f           clrx   
   E2FD:  a60a         lda    #$0A
-  E2FF:  cde246       jsr    $E246
+  E2FF:  cde246       jsr    Adc_Read
   E302:  95           tsx    
   E303:  f7           sta    ,x
   E304:  a1d1         cmp    #$D1
@@ -4818,7 +4818,7 @@ LE67B:
   E68E:  f7           sta    ,x
   E68F:  5f           clrx   
   E690:  a60a         lda    #$0A
-  E692:  cde246       jsr    $E246
+  E692:  cde246       jsr    Adc_Read
   E695:  95           tsx    
   E696:  e701         sta    1,x
   E698:  5f           clrx   
@@ -4826,7 +4826,7 @@ LE67B:
   E69B:  cdf497       jsr    Delay_Loop
   E69E:  5f           clrx   
   E69F:  a602         lda    #$02
-  E6A1:  cde246       jsr    $E246
+  E6A1:  cde246       jsr    Adc_Read
   E6A4:  c70235       sta    $0235
   E6A7:  c60234       lda    $0234
   E6AA:  aa01         ora    #$01
@@ -4871,7 +4871,7 @@ LE6DC:
   E6E6:  cde649       jsr    $E649
   E6E9:  5f           clrx   
   E6EA:  a60a         lda    #$0A
-  E6EC:  cde246       jsr    $E246
+  E6EC:  cde246       jsr    Adc_Read
   E6EF:  95           tsx    
   E6F0:  e702         sta    2,x
   E6F2:  5f           clrx   
@@ -4879,7 +4879,7 @@ LE6DC:
   E6F5:  cdf497       jsr    Delay_Loop
   E6F8:  5f           clrx   
   E6F9:  a602         lda    #$02
-  E6FB:  cde246       jsr    $E246
+  E6FB:  cde246       jsr    Adc_Read
   E6FE:  95           tsx    
   E6FF:  e701         sta    1,x
   E701:  c60234       lda    $0234
@@ -4914,14 +4914,14 @@ LE724:
   E72B:  7f           clr    ,x
   E72C:  5f           clrx   
   E72D:  a602         lda    #$02
-  E72F:  cde246       jsr    $E246
+  E72F:  cde246       jsr    Adc_Read
   E732:  c70236       sta    $0236
   E735:  5f           clrx   
   E736:  a61e         lda    #$1E
   E738:  cdf497       jsr    Delay_Loop
   E73B:  5f           clrx   
   E73C:  a602         lda    #$02
-  E73E:  cde246       jsr    $E246
+  E73E:  cde246       jsr    Adc_Read
   E741:  c70107       sta    $0107
   E744:  450106       ldhx   #$0106
   E747:  89           pshx   
@@ -4943,7 +4943,7 @@ LE724:
   E762:  cdf497       jsr    Delay_Loop
   E765:  5f           clrx   
   E766:  a602         lda    #$02
-  E768:  cde246       jsr    $E246
+  E768:  cde246       jsr    Adc_Read
   E76B:  c70107       sta    $0107
   E76E:  450106       ldhx   #$0106
   E771:  89           pshx   
@@ -5222,7 +5222,7 @@ LE90B:
   E90F:  89           pshx   
   E910:  87           psha   
   E911:  5f           clrx   
-  E912:  cde246       jsr    $E246
+  E912:  cde246       jsr    Adc_Read
   E915:  95           tsx    
   E916:  f7           sta    ,x
   E917:  e606         lda    6,x
@@ -5951,7 +5951,7 @@ LF61D:
 LF63D:
   F63D:  5f           clrx   
   F63E:  a603         lda    #$03
-  F640:  cde246       jsr    $E246
+  F640:  cde246       jsr    Adc_Read
   F643:  95           tsx    
   F644:  f7           sta    ,x
   F645:  a1f8         cmp    #$F8
@@ -6002,7 +6002,7 @@ LF68B:
   F68F:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_F690   [0xF690]   <- C55F
+; Inputs_Init   [0xF690]   <- C55F
 ;---------------------------------------------------------------
   F690:  87           psha   
   F691:  95           tsx    
@@ -6214,7 +6214,7 @@ LF77E:
   F811:  f7           sta    ,x
   F812:  5f           clrx   
   F813:  a60a         lda    #$0A
-  F815:  cde246       jsr    $E246
+  F815:  cde246       jsr    Adc_Read
   F818:  95           tsx    
   F819:  f7           sta    ,x
   F81A:  a14e         cmp    #$4E

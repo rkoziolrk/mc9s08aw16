@@ -2,8 +2,8 @@
 
 | Addr | Name |
 |------|------|
-| 0xC400 | `sub_C400` |
-| 0xC464 | `sub_C464` |
+| 0xC400 | `Flash_BurstProgram` |
+| 0xC464 | `Flash_ErasePage` |
 | 0xC4C0 | `App_Startup` |
 | 0xC52D | `main` |
 | 0xC54D | `App_InitAll` |
@@ -25,7 +25,7 @@
 | 0xC7B6 | `Tpm2_Init` |
 | 0xC7DB | `Nvm_Init` |
 | 0xC841 | `sub_C841` |
-| 0xC8AF | `sub_C8AF` |
+| 0xC8AF | `Nvm_Process` |
 | 0xC981 | `sub_C981` |
 | 0xC9B8 | `sub_C9B8` |
 | 0xCA17 | `sub_CA17` |
@@ -91,8 +91,8 @@
 | 0xE15C | `sub_E15C` |
 | 0xE188 | `sub_E188` |
 | 0xE1C6 | `sub_E1C6` |
-| 0xE229 | `sub_E229` |
-| 0xE246 | `sub_E246` |
+| 0xE229 | `Sensor_Init` |
+| 0xE246 | `Adc_Read` |
 | 0xE271 | `sub_E271` |
 | 0xE27D | `sub_E27D` |
 | 0xE2FB | `sub_E2FB` |
@@ -139,7 +139,7 @@
 | 0xF5F3 | `ExitCritical` |
 | 0xF607 | `sub_F607` |
 | 0xF628 | `sub_F628` |
-| 0xF690 | `sub_F690` |
+| 0xF690 | `Inputs_Init` |
 | 0xF73F | `sub_F73F` |
 | 0xF80A | `sub_F80A` |
 | 0xF8A7 | `sub_F8A7` |
