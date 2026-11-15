@@ -86,6 +86,8 @@ extern void Lin_GotoSleep2(void);             /* [0xDAD7] */
 extern void LinSched_OnHeader(byte pid);      /* [0xDAD9] */
 extern void LinCrc_Fold(void);                /* [0xDE88] */
 extern void LinDiag_Response(byte kind);      /* [0xDBB7] */
+void Lin_RxByte(byte data);                   /* [0xDEA6] (fwd) */
+void Lin_TxByteOrErr(byte event);             /* [0xDFB6] (fwd) */
 
 static void Lin_CrcAdd(byte b)
 {

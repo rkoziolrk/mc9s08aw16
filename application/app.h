@@ -72,7 +72,9 @@ void Coding_Normalize(void);/* [0xE27D] */
 void Coding_Probe(void);    /* [0xE2FB] */
 void Coding_Calibrate(void);/* [0xF73F] */
 void Coding_Sample(void);   /* [0xF80A] */
-byte Filter_Avg(byte acc, byte sample, byte weight);  /* [0xF4AB] */
+byte Filter_Avg(byte acc, byte sample, byte weight);  /* [0xF4AB] filters.c */
+byte Table_Interp(const byte *table, byte x);         /* [0xF535] filters.c */
+void Btn_Dispatch(byte hHi, byte hLo, byte pressed);  /* [0xFCD8] filters.c */
 
 /* wheel_io.c - excitation drive + coding/ladder measurement + detection SM */
 INTERRUPT void Scan_Isr(void);   /* [0xE537] 1 ms excitation PWM            */

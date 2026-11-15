@@ -85,10 +85,12 @@ against this image's asm.
       $B8/$B9/$01D9/$01E2). Autobaud reconstructed as Lin_AutobaudIsr 0xCFA2
       in lin.c (TPM2 CH1 capture, 5-phase sync measurement, 0x2CC3 threshold,
       divisor -> SCI1BDH/BDL). Lin_GotoSleep2 0xDAD7 done.
+- [x] Shared helpers -> filters.c: Filter_Avg 0xF4AB (slew-rate limiter),
+      Table_Interp 0xF535 (piecewise-linear NTC->level curve), Btn_Dispatch
+      0xFCD8 (indirect handler trampoline).
 - [ ] Remaining LIN transport-core helpers as externs: D191/E037/D722/D65A/
-      D17B/E02C/D6D2/C841/D136/D14E; sub_CA54; E188; helper bodies (Filter_Avg
-      F4AB, Table_Interp F535, Strap_Accumulate F8A7, Btn_Dispatch FCD8); the
-      detailed ISO-TP RxFrame/TxFrame byte handling; E78B init.
+      D17B/E02C/D6D2/C841/D136/D14E; sub_CA54; E188; Strap_Accumulate F8A7
+      body; the detailed ISO-TP RxFrame/TxFrame byte handling; E78B init.
 - [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
       F607 CC56 EABE  (+ helper bodies Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7)
 
