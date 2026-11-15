@@ -25,10 +25,20 @@ against this image's asm.
 - [x] Tpm1_Init 0xC792, Tpm2_Init 0xC7B6, Isr_Tpm2Ch0 0xC743 -> timebase.c
 - [x] LIN byte engines -> lin.c (Lin_RxByte 0xDEA6, Lin_TxByteOrErr 0xDFB6, full state machines) + driver core. transport helpers in lin_transport.c (LinCrc_Fold, LinSci_RxOn/Off, LinErr_Set, LinSched_OnHeader). TODO: autobaud, LinErr_Report/LinDiag_Response/LinTp_Timer detail, signals
       autobaud, RX/TX byte engines, transport, signals
-- [ ] ADC + variant/feature detection (Adc_Read 0xE251, Sensor_Init 0xE22B, init 0xF690)
+- [x] ADC front-end: Sensor_Init 0xE229, Adc_Read 0xE246 -> sensor.c
+- [x] Variant/coding detection + acquisition -> inputs.c
+      (Inputs_Init 0xF690, Coding_Reset 0xE271, Coding_Normalize 0xE27D,
+       Coding_Probe 0xE2FB, Coding_Calibrate 0xF73F, Coding_Sample 0xF80A).
+      Coding = ADC ch 0x0A window [0x6F,0xD1) + GPIO straps (tables 0xFF71/
+      0xFF74). NOT the AW32 9-band table — single validity window. DEVICE.md
+      updated with the verified windows/volts.
 - [ ] Buttons / backlight / scroll, supply, heating, diag, selftest
-- [ ] Remaining App_InitAll targets: F690 FA6B E78B E271 F3F1 EA88 E7CF E229
-      F73F E2FB E517 F607 CC56 EABE
+- [ ] Detect/scan engine -> wheel_io.c: Scan_Isr 0xE537, Scan/Detect_Init
+      0xE517, Detect_Task 0xE337/0xE348, Detect_StateMachine 0xE35E (switch on
+      0x0233, states 0..8), drive/measure helpers (E5A7 E5EC E631 E649 E65C
+      E661 E67F E6E4 E729), Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7.
+- [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
+      E517 F607 CC56 EABE
 
 ## Vector handlers (0xFFC0-0xFFFF)
 reset→0xC4C0, default→0xC595, and 0xCF46 / 0xCFA2 / 0xC743 / 0xF3B7 for the

@@ -77,20 +77,20 @@ void App_InitAll(void)
     COP_Feed();             /* [0xC739] */
     Ports_Init();           /* [0xF28E] GPIO directions / pull-ups         */
     Nvm_Init();             /* [0xC7DB] load configuration from flash       */
-    sub_F690();             /* [0xF690] (ADC/variant init)                  */
+    Inputs_Init();          /* [0xF690] coding/ladder input state init       */
     Tpm2_Init();            /* [0xC7B6] time base + LIN capture             */
     COP_Feed();             /* [0xC739] */
     Tpm1_Init();            /* [0xC792] PWM (backlight)                     */
     sub_FA6B();             /* [0xFA6B] */
     sub_E78B();             /* [0xE78B] */
-    sub_E271();             /* [0xE271] */
+    Coding_Reset();         /* [0xE271] reset normalised coding value       */
     sub_F3F1();             /* [0xF3F1] */
     sub_EA88();             /* [0xEA88] */
     sub_E7CF();             /* [0xE7CF] */
     sub_E229();             /* [0xE229] */
-    sub_F73F();             /* [0xF73F] */
-    sub_E2FB();             /* [0xE2FB] */
-    sub_E517();             /* [0xE517] */
+    Coding_Calibrate();     /* [0xF73F] build strap coding + delays          */
+    Coding_Probe();         /* [0xE2FB] coding validity + plausibility probe */
+    sub_E517();             /* [0xE517] detect/scan engine init (wheel_io.c) */
     sub_F607();             /* [0xF607] */
     sub_CC56();             /* [0xCC56] */
     sub_EABE();             /* [0xEABE] */

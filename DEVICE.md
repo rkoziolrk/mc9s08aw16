@@ -23,8 +23,43 @@ the backlight dimming level with the steering-column module over LIN.
 - Peripheral register map is identical (same HCS08 AW family), so
   `common/mc9s08aw16.h` is the AW32 header with the memory-map sizes fixed.
 
-## Variant coding
-The steering-wheel variant/feature coding (resistor on an ADC channel → the
-feature bitmask) works the same way as on the AW32; the exact ADC windows
-and the equipment table will be filled in once `Adc_DetectVariant` is
-reconstructed (see PROGRESS.md). Vref assumed 5 V.
+## Variant coding (verified against this image)
+
+Reconstructed in `application/inputs.c`. **Important:** the AW16 coding is
+*not* the AW32's table of nine discrete ADC "variant bands". Verified against
+`reference/application.asm`, the A6 C7 part identifies the fitted
+steering-wheel two ways — exactly the AW32 mechanism, but with a single ADC
+validity window instead of a band table:
+
+1. **Analogue coding divider on ADC channel 0x0A.** It is sampled and
+   low-pass filtered every 2 ticks (`Coding_Sample`, 0xF80A) into the filtered
+   coding value `g_codingAdc` [0x0267], and probed once at start-up
+   (`Coding_Probe`, 0xE2FB). A reading is only accepted inside the validity
+   window **[0x6F, 0xD1)**; the sampler also treats anything below **0x4E** as
+   "channel low / absent". Presence is confirmed by driving the resistor
+   low-side/high-side and re-reading (`Meas_LowSide`/`Meas_HighSide`), setting
+   `g_codingValid` [0x029E] and `g_codingState` [0x0233] = 0x08.
+
+2. **GPIO strap bits.** `Coding_Calibrate` (0xF73F) walks the `{portPtr,mask}`
+   triplet tables in flash at **0xFF71** and **0xFF74** (e.g. `{PTGD,0x08}`,
+   `{PTDD,0x08}`) and packs the selected input bits into the coding bytes
+   `g_codingStrap0/1` [0x02BD/0x02BE]. This is the AW16 equivalent of the
+   AW32 `Variant_ReadStraps`; the finer equipment selection comes from these
+   straps plus the NVM/LIN configuration block, not from an ADC band table.
+
+### ADC coding windows in volts (Vref = 5.0 V, 8-bit, U = code/255 × 5 V)
+
+| Code | Voltage | Meaning |
+|-----:|:-------:|:--------|
+| < 0x4E (78) | < 1.53 V | channel low → coding absent (sampler ignores) |
+| 0x6F (111) | 2.18 V | low edge of the **valid coding window** |
+| 0xD1 (209) | 4.10 V | high edge (exclusive) of the valid coding window |
+
+So a plausible coded steering-wheel presents **2.18–4.10 V** on channel 0x0A
+and passes the resistor low/high-side plausibility check. The equipment
+actually enabled (buttons / scroll+backlight / heating) is then selected from
+the strap bytes and the configuration block; the feature-gating map is being
+traced as the button/backlight/heating modules are reconstructed (see
+PROGRESS.md). Heating uses the NTC on **ADC channel 0x03** (open/short window
+[0x15, 0xF8), `0xF628`) and the button resistor ladder uses **ADC channel
+0x02**.
