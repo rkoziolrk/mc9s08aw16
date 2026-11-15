@@ -19,7 +19,12 @@ against this image's asm.
 - [x] Startup / scheduler / time base / clock / COP / SOPT — `application/main.c`
       (App_Startup 0xC4C0, main 0xC52D, App_InitAll 0xC54D, Scheduler_Run 0xC5FA,
        Clock_Init 0xC6D0, SysOpt_Init 0xC6EF, COP_Feed 0xC739, Isr_Default 0xC595)
-- [ ] Tasks: Task_2Ticks 0xC644, Task_10Ticks 0xC64A, Task_25Ticks 0xC6B7
+- [x] Tasks -> tasks.c: Task_2Ticks 0xC644 (Coding_Sample+COP_Feed),
+      Task_10Ticks 0xC64A (round-robin 10 slots; table 0xC665 extracted),
+      Task_25Ticks 0xC6B7. Slot callees still as externs: NvmTask_Run 0xC6F6,
+      Timers_Tick 0xEC3A, Lin_Housekeep 0xCD0A, Signals_Build 0xCC7E,
+      Wheel_Step 0xE796, Supply_Task 0xFAD4, Port_Refresh 0xF33B,
+      Diag_Slot 0xC5A1, Signals_Extra 0xCCFC, Status_Task 0xCCD3.
 - [x] Flash config store -> nvm.c (Flash_BurstProgram 0xC400, Flash_ErasePage 0xC464, Nvm_Init 0xC7DB banks 0xC000/0xC200, Nvm_Checksum; Nvm_Process 0xC8AF structural). NvmTask_Run 0xC6F6 named.
 - [x] Ports_Init 0xF28E -> ports.c; EnterCritical/ExitCritical 0xF5E6/0xF5F3 + Delay_Loop 0xF497 -> util.c
 - [x] Tpm1_Init 0xC792, Tpm2_Init 0xC7B6, Isr_Tpm2Ch0 0xC743 -> timebase.c
