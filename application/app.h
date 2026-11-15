@@ -55,6 +55,7 @@ void Tpm2_Init(void);       /* [0xC7B6] */
 
 /* lin.c */
 void Sci_Init(void);        /* [0xCF10] */
+INTERRUPT void Lin_AutobaudIsr(void);/* [0xCFA2] TPM2 CH1 capture autobaud */
 void Sci_SendByte(byte data);/* [0xCF36] */
 INTERRUPT void Isr_Sci1(void);/* [0xCF46] */
 INTERRUPT void Isr_Tpm2Ch0(void);/* [0xC743] */

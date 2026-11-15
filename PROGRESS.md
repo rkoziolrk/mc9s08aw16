@@ -79,11 +79,16 @@ against this image's asm.
       0xE7CB (backlight.c); Timers_Tick 0xEC3A (buttons.c); power.c:
       Sleep_Enter 0xC6BD, Power_Task 0xC5A1, Sci_Disable 0xCD10, Tick_Advance
       0xC5DE, Wake_SetRequest 0xC5CA. tasks.c now fully named (no sub_ left).
-- [ ] LIN transport bodies (point 4): LinSched_OnHeader detail 0xDAD9,
-      LinDiag_Response 0xDBB7, LinErr_Report 0xDCCB, LinTp_Timer 0xDD6C,
-      ISO-TP RxFrame/TxFrame, autobaud; plus D191/E037/D722/D65A/D17B/E02C/
-      D6D2/C841; helper bodies (Filter_Avg F4AB, Table_Interp F535,
-      Strap_Accumulate F8A7, Btn_Dispatch FCD8); E78B init.
+- [x] LIN transport bodies (point 4): LinErr_Report 0xDCCB, LinDiag_Response
+      0xDBB7 and LinTp_Timer 0xDD6C fleshed out in lin_transport.c (ISO-TP
+      N_As/N_Cr timers $B1/$01D6/$01D7, wake timer $C2-$C4, diag state
+      $B8/$B9/$01D9/$01E2). Autobaud reconstructed as Lin_AutobaudIsr 0xCFA2
+      in lin.c (TPM2 CH1 capture, 5-phase sync measurement, 0x2CC3 threshold,
+      divisor -> SCI1BDH/BDL). Lin_GotoSleep2 0xDAD7 done.
+- [ ] Remaining LIN transport-core helpers as externs: D191/E037/D722/D65A/
+      D17B/E02C/D6D2/C841/D136/D14E; sub_CA54; E188; helper bodies (Filter_Avg
+      F4AB, Table_Interp F535, Strap_Accumulate F8A7, Btn_Dispatch FCD8); the
+      detailed ISO-TP RxFrame/TxFrame byte handling; E78B init.
 - [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
       F607 CC56 EABE  (+ helper bodies Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7)
 
