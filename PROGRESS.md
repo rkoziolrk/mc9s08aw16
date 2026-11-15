@@ -32,13 +32,17 @@ against this image's asm.
       Coding = ADC ch 0x0A window [0x6F,0xD1) + GPIO straps (tables 0xFF71/
       0xFF74). NOT the AW32 9-band table — single validity window. DEVICE.md
       updated with the verified windows/volts.
-- [ ] Buttons / backlight / scroll, supply, heating, diag, selftest
-- [ ] Detect/scan engine -> wheel_io.c: Scan_Isr 0xE537, Scan/Detect_Init
-      0xE517, Detect_Task 0xE337/0xE348, Detect_StateMachine 0xE35E (switch on
-      0x0233, states 0..8), drive/measure helpers (E5A7 E5EC E631 E649 E65C
-      E661 E67F E6E4 E729), Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7.
+- [x] Detect/scan engine -> wheel_io.c: Scan_Isr 0xE537 (1 ms excitation PWM),
+      Detect_Init 0xE517, Detect_Task 0xE337/Detect_Timer 0xE348,
+      Detect_StateMachine 0xE35E (switch on 0x0233, states 0..8; jump table at
+      0xE36C extracted from the image), drive helpers (Drive_Off E649,
+      Drive_Stop E631, Drive_PwmSetup E5A7, Drive_PwmSetup2 E5EC), measure
+      helpers (Meas_ClearStatus E65C, Meas_LadderRatio E661, Meas_LowSide E6E4,
+      Meas_HighSide E67F, Meas_Ladder2 E729). Drives PTE2/PTF4, ADC ch 0x0A
+      (coding) + ch 0x02 (ladder).
+- [ ] Buttons / backlight / scroll output stage, supply, heating, diag, selftest
 - [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
-      E517 F607 CC56 EABE
+      F607 CC56 EABE  (+ helper bodies Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7)
 
 ## Vector handlers (0xFFC0-0xFFFF)
 reset→0xC4C0, default→0xC595, and 0xCF46 / 0xCFA2 / 0xC743 / 0xF3B7 for the

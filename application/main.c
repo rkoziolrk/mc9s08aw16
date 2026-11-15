@@ -90,7 +90,7 @@ void App_InitAll(void)
     sub_E229();             /* [0xE229] */
     Coding_Calibrate();     /* [0xF73F] build strap coding + delays          */
     Coding_Probe();         /* [0xE2FB] coding validity + plausibility probe */
-    sub_E517();             /* [0xE517] detect/scan engine init (wheel_io.c) */
+    Detect_Init();          /* [0xE517] detect/scan engine init             */
     sub_F607();             /* [0xF607] */
     sub_CC56();             /* [0xCC56] */
     sub_EABE();             /* [0xEABE] */

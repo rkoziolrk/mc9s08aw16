@@ -71,12 +71,28 @@ void Coding_Normalize(void);/* [0xE27D] */
 void Coding_Probe(void);    /* [0xE2FB] */
 void Coding_Calibrate(void);/* [0xF73F] */
 void Coding_Sample(void);   /* [0xF80A] */
+byte Filter_Avg(byte acc, byte sample, byte weight);  /* [0xF4AB] */
+
+/* wheel_io.c - excitation drive + coding/ladder measurement + detection SM */
+INTERRUPT void Scan_Isr(void);   /* [0xE537] 1 ms excitation PWM            */
+void Detect_Init(void);          /* [0xE517] */
+void Detect_Task(void);          /* [0xE337] from Task_10Ticks              */
+void Detect_StateMachine(void);  /* [0xE35E] */
+void Drive_Off(void);            /* [0xE649] */
+void Drive_Stop(void);           /* [0xE631] */
+void Drive_PwmSetup(byte compare);  /* [0xE5A7] */
+void Drive_PwmSetup2(byte compare); /* [0xE5EC] */
+void Meas_ClearStatus(void);     /* [0xE65C] */
+byte Meas_LadderRatio(void);     /* [0xE661] */
+byte Meas_LowSide(void);         /* [0xE6E4] */
+byte Meas_HighSide(void);        /* [0xE67F] */
+void Meas_Ladder2(void);         /* [0xE729] */
 
 /* Init-list targets not yet individually reconstructed (placeholder externs
  * so main.c links; each becomes a real module in a later pass). */
 void sub_FA6B(void); void sub_E78B(void);
 void sub_F3F1(void); void sub_EA88(void); void sub_E7CF(void); void sub_E229(void);
-void sub_E517(void); void sub_F607(void);
+void sub_F607(void);
 void sub_CC56(void); void sub_EABE(void);
 
 #endif /* APP_H */
