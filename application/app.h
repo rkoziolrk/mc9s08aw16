@@ -95,11 +95,21 @@ void Buttons_StateInit(void);    /* [0xEA88] */
 void Buttons_Calibrate(void);    /* [0xEABE] */
 byte Button_ReadWindow(byte channel, byte lo, byte hi);  /* [0xE90E] */
 
+/* heating.c - steering-wheel heating (NTC ch 0x03 -> output level) */
+void Heating_OutputInit(void);   /* [0xF607] */
+void Heating_Task(void);         /* [0xF628] from Task_10Ticks */
+
+/* backlight.c - button backlight PWM (TPM1 channel 2) */
+INTERRUPT void Backlight_Isr(void); /* [0xF3B7] TPM1 overflow */
+void Backlight_Init(void);       /* [0xF3F1] */
+void Backlight_Task(void);       /* [0xF3F8] from Task_10Ticks */
+void Backlight_Restart(void);    /* [0xF428] */
+void Backlight_PwmOff(void);     /* [0xF464] */
+byte Backlight_IsOn(void);       /* [0xF41A] */
+
 /* Init-list targets not yet individually reconstructed (placeholder externs
  * so main.c links; each becomes a real module in a later pass). */
 void sub_FA6B(void); void sub_E78B(void);
-void sub_F3F1(void); void sub_E229(void);
-void sub_F607(void);
 void sub_CC56(void);
 
 #endif /* APP_H */

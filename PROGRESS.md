@@ -45,7 +45,16 @@ against this image's asm.
       0xE90E, Buttons_StateInit 0xEA88, Buttons_Calibrate 0xEABE. 4 GPIO
       buttons on port C (table 0xFF25) + 12 ADC-ladder buttons on ch 0/1/8/9
       (table 0xFF35), handlers 0xE929..0xEA6C via 0xFCD8 trampoline.
-- [ ] Backlight / scroll output stage, supply, heating, diag, selftest
+- [x] Heating -> heating.c: Heating_OutputInit 0xF607, Heating_Task 0xF628.
+      NTC on ADC ch 0x03, open/short window [0x15,0xF8), filter + curve table
+      0x0164 -> output g_heatOut 0x02A0. Gated by state bits [0x019C]&0x06.
+- [x] Backlight PWM -> backlight.c: Backlight_Isr 0xF3B7 (TPM1 overflow),
+      Backlight_Init 0xF3F1, Backlight_Task 0xF3F8, Backlight_Restart 0xF428,
+      Backlight_PwmOff 0xF464, Backlight_IsOn 0xF41A. TPM1 CH2 PWM (MOD 0xC8),
+      duty = 0xC8 - level, level = normalised ADC ch 0x0A (dimming input).
+      NOTE: ch 0x0A = backlight dimming level, NOT variant coding (straps are);
+      earlier inputs.c "coding" naming to be reconciled in the final pass.
+- [ ] Supply, diag, selftest, scroll/roll-wheel event handlers (0xE929..)
 - [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
       F607 CC56 EABE  (+ helper bodies Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7)
 
