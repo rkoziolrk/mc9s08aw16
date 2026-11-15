@@ -1,8 +1,5 @@
 # Function index (MC9S08AW16)
 
-All recovered routines by address. Names are the reverse-engineering labels
-used in the C sources and `application.asm`; unnamed ones are `sub_XXXX`.
-
 | Addr | Name |
 |------|------|
 | 0xC400 | `sub_C400` |
@@ -18,10 +15,10 @@ used in the C sources and `application.asm`; unnamed ones are `sub_XXXX`.
 | 0xC644 | `Task_2Ticks` |
 | 0xC64A | `Task_10Ticks` |
 | 0xC6B7 | `Task_25Ticks` |
-| 0xC6BD | `sub_C6BD` |
+| 0xC6BD | `Sleep_Enter` |
 | 0xC6D0 | `Clock_Init` |
 | 0xC6EF | `SysOpt_Init` |
-| 0xC6F6 | `sub_C6F6` |
+| 0xC6F6 | `NvmTask_Run` |
 | 0xC739 | `COP_Feed` |
 | 0xC743 | `sub_C743` |
 | 0xC792 | `Tpm1_Init` |
@@ -135,7 +132,7 @@ used in the C sources and `application.asm`; unnamed ones are `sub_XXXX`.
 | 0xF41A | `sub_F41A` |
 | 0xF428 | `sub_F428` |
 | 0xF464 | `sub_F464` |
-| 0xF497 | `sub_F497` |
+| 0xF497 | `Delay_Loop` |
 | 0xF4AB | `sub_F4AB` |
 | 0xF535 | `sub_F535` |
 | 0xF5E6 | `EnterCritical` |

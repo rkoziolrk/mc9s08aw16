@@ -194,7 +194,7 @@ LC53F:
   C5A1:  c60100       lda    $0100
   C5A4:  a402         and    #$02
   C5A6:  2703         beq    LC5AB
-  C5A8:  cdc6bd       jsr    $C6BD
+  C5A8:  cdc6bd       jsr    Sleep_Enter
 LC5AB:
   C5AB:  c6026b       lda    $026B
   C5AE:  a401         and    #$01
@@ -304,7 +304,7 @@ LC643:
 ;---------------------------------------------------------------
   C64A:  4501a2       ldhx   #$01A2
   C64D:  7c           inc    ,x
-  C64E:  cdc6f6       jsr    $C6F6
+  C64E:  cdc6f6       jsr    NvmTask_Run
   C651:  cdcd0a       jsr    $CD0A
   C654:  cde337       jsr    $E337
   C657:  cde7f8       jsr    $E7F8
@@ -343,7 +343,7 @@ LC6B0:
   C6B0:  4f           clra   
   C6B1:  c701a2       sta    g_slot10
 LC6B4:
-  C6B4:  ccc6f6       jmp    $C6F6
+  C6B4:  ccc6f6       jmp    NvmTask_Run
 
 ;---------------------------------------------------------------
 ; Task_25Ticks   [0xC6B7]   <- C62C
@@ -352,7 +352,7 @@ LC6B4:
   C6BA:  ccec3a       jmp    $EC3A
 
 ;---------------------------------------------------------------
-; sub_C6BD   [0xC6BD]   <- C5A8
+; Sleep_Enter   [0xC6BD]   <- C5A8
 ;---------------------------------------------------------------
   C6BD:  9b           sei    
   C6BE:  cdcd10       jsr    $CD10
@@ -391,7 +391,7 @@ LC6E1:
   C6F4:  2043         bra    COP_Feed
 
 ;---------------------------------------------------------------
-; sub_C6F6   [0xC6F6]   <- C64E
+; NvmTask_Run   [0xC6F6]   <- C64E
 ;---------------------------------------------------------------
   C6F6:  87           psha   
   C6F7:  95           tsx    
@@ -4188,7 +4188,7 @@ LE1EB:
   E251:  c70010       sta    ADC1SC1
   E254:  5f           clrx   
   E255:  a602         lda    #$02
-  E257:  cdf497       jsr    $F497
+  E257:  cdf497       jsr    Delay_Loop
   E25A:  2001         bra    LE25D
 LE25C:
   E25C:  7f           clr    ,x
@@ -4456,7 +4456,7 @@ LE431:
   E431:  cde649       jsr    $E649
   E434:  5f           clrx   
   E435:  a6fa         lda    #$FA
-  E437:  cdf497       jsr    $F497
+  E437:  cdf497       jsr    Delay_Loop
   E43A:  cde631       jsr    $E631
   E43D:  cde50f       jsr    $E50F
   E440:  a603         lda    #$03
@@ -4492,7 +4492,7 @@ LE47A:
   E47F:  cde649       jsr    $E649
   E482:  5f           clrx   
   E483:  a6fa         lda    #$FA
-  E485:  cdf497       jsr    $F497
+  E485:  cdf497       jsr    Delay_Loop
   E488:  c602af       lda    $02AF
   E48B:  ab0a         add    #$0A
   E48D:  5f           clrx   
@@ -4823,7 +4823,7 @@ LE67B:
   E696:  e701         sta    1,x
   E698:  5f           clrx   
   E699:  a6f0         lda    #$F0
-  E69B:  cdf497       jsr    $F497
+  E69B:  cdf497       jsr    Delay_Loop
   E69E:  5f           clrx   
   E69F:  a602         lda    #$02
   E6A1:  cde246       jsr    $E246
@@ -4876,7 +4876,7 @@ LE6DC:
   E6F0:  e702         sta    2,x
   E6F2:  5f           clrx   
   E6F3:  a6f0         lda    #$F0
-  E6F5:  cdf497       jsr    $F497
+  E6F5:  cdf497       jsr    Delay_Loop
   E6F8:  5f           clrx   
   E6F9:  a602         lda    #$02
   E6FB:  cde246       jsr    $E246
@@ -4918,7 +4918,7 @@ LE724:
   E732:  c70236       sta    $0236
   E735:  5f           clrx   
   E736:  a61e         lda    #$1E
-  E738:  cdf497       jsr    $F497
+  E738:  cdf497       jsr    Delay_Loop
   E73B:  5f           clrx   
   E73C:  a602         lda    #$02
   E73E:  cde246       jsr    $E246
@@ -4940,7 +4940,7 @@ LE724:
   E75C:  c70236       sta    $0236
   E75F:  5f           clrx   
   E760:  a61e         lda    #$1E
-  E762:  cdf497       jsr    $F497
+  E762:  cdf497       jsr    Delay_Loop
   E765:  5f           clrx   
   E766:  a602         lda    #$02
   E768:  cde246       jsr    $E246
@@ -5600,7 +5600,7 @@ LF3E6:
   F405:  f7           sta    ,x
   F406:  5f           clrx   
   F407:  a664         lda    #$64
-  F409:  cdf497       jsr    $F497
+  F409:  cdf497       jsr    Delay_Loop
   F40C:  4f           clra   
   F40D:  c70263       sta    $0263
   F410:  ad16         bsr    LF428
@@ -5676,7 +5676,7 @@ LF45B:
 ;   .... data/gap F47D-F497 ....
 
 ;---------------------------------------------------------------
-; sub_F497   [0xF497]   <- E257, E437, E485, E69B, E6F5, E738, E762, F409
+; Delay_Loop   [0xF497]   <- E257, E437, E485, E69B, E6F5, E738, E762, F409
 ;---------------------------------------------------------------
   F497:  450000       ldhx   #$0000
   F49A:  97           tax    
@@ -6120,7 +6120,7 @@ LF76C:
   F773:  9f           txa    
   F774:  8b           pshh   
   F775:  88           pulx   
-  F776:  cdf497       jsr    $F497
+  F776:  cdf497       jsr    Delay_Loop
   F779:  4f           clra   
   F77A:  95           tsx    
   F77B:  e702         sta    2,x
@@ -6239,7 +6239,7 @@ LF77E:
   F83E:  cde27d       jsr    $E27D
   F841:  c602bb       lda    $02BB
   F844:  5f           clrx   
-  F845:  cdf497       jsr    $F497
+  F845:  cdf497       jsr    Delay_Loop
   F848:  a602         lda    #$02
   F84A:  95           tsx    
   F84B:  f7           sta    ,x
@@ -6342,7 +6342,7 @@ LF89E:
   F8E7:  e702         sta    2,x
   F8E9:  c602ba       lda    $02BA
   F8EC:  5f           clrx   
-  F8ED:  cdf497       jsr    $F497
+  F8ED:  cdf497       jsr    Delay_Loop
   F8F0:  95           tsx    
   F8F1:  e606         lda    6,x
   F8F3:  ae06         ldx    #$06

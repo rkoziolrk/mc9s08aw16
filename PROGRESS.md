@@ -20,7 +20,7 @@ against this image's asm.
        Clock_Init 0xC6D0, SysOpt_Init 0xC6EF, COP_Feed 0xC739, Isr_Default 0xC595)
 - [ ] Tasks: Task_2Ticks 0xC644, Task_10Ticks 0xC64A, Task_25Ticks 0xC6B7
 - [ ] NvmTask_Run 0xC6F6, Nvm_Init 0xC7DB, flash config writer 0xC400+
-- [ ] Ports_Init 0xF28E, EnterCritical 0xF5E6, ExitCritical 0xF5F3, u8_mod 0xFCFC
+- [x] Ports_Init 0xF28E -> ports.c; EnterCritical/ExitCritical 0xF5E6/0xF5F3 + Delay_Loop 0xF497 -> util.c
 - [ ] Tpm1_Init 0xC792, Tpm2_Init 0xC7B6, time-base ISR (see vectors)
 - [ ] LIN driver: Sci_Init 0xCF11 (SCI1BDL=0x41, SCI1C2=0x2C — same as AW32),
       autobaud, RX/TX byte engines, transport, signals

@@ -35,6 +35,8 @@ INTERRUPT void Isr_Default(void);
 void EnterCritical(void);   /* [0xF5E6] */
 void ExitCritical(void);    /* [0xF5F3] */
 byte u8_mod(byte value, byte divisor);  /* [0xFCFC] unsigned modulo helper */
+byte Delay_Loop(word count);            /* [0xF497] */
+extern byte g_criticalNesting;          /* [0x0109] */
 
 /* Periodic tasks */
 void Task_2Ticks(void);     /* [0xC644] */
