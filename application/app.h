@@ -46,6 +46,10 @@ void Task_25Ticks(void);    /* [0xC6B7] */
 /* Hardware / module init (reconstructed in their own files; see PROGRESS.md) */
 void Ports_Init(void);      /* [0xF28E] */
 void Nvm_Init(void);        /* [0xC7DB] */
+byte Nvm_Process(void);     /* [0xC8AF] */
+void Flash_BurstProgram(void);/* [0xC400] */
+void Flash_ErasePage(void); /* [0xC464] */
+word Nvm_Checksum(const word *p, word count);
 void Tpm1_Init(void);       /* [0xC792] */
 void Tpm2_Init(void);       /* [0xC7B6] */
 
