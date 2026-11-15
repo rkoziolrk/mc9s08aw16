@@ -116,3 +116,46 @@ byte Nvm_Process(void)
      * (128 data bytes + 0x83 filler) -> verify. See the asm. */
     return 0;
 }
+
+/* ======================================================================
+ * Flash_WriteEnter  [0xF375] / Flash_WriteExit  [0xF37D]
+ * Guard the flash write by toggling the activity bit PTE7 (clear while a
+ * program/erase is running, set again when done).
+ * ====================================================================== */
+void Flash_WriteEnter(void) { *(volatile byte *)0x0008 &= (byte)~0x80; }
+void Flash_WriteExit(void)  { *(volatile byte *)0x0008 |=  0x80; }
+
+/* tick-base adjustment after a blocking flash op [0xC5DE] (power.c) */
+void Tick_Advance(byte ticks);
+
+/* ======================================================================
+ * NvmTask_Run  [0xC6F6]   (called from Task_10Ticks)
+ * Background flash-save driver.  It services the COP, and once every sixth
+ * call runs one step of the flash-save state machine (Nvm_Process) under a
+ * critical section with the write guard asserted.  The number of ticks the
+ * operation blocked is folded back into the time base (Tick_Advance) so the
+ * scheduler stays aligned, and PTE7 is restored.
+ * ====================================================================== */
+void NvmTask_Run(void)
+{
+    byte blocked;
+
+    COP_Feed();
+    if ((byte)(++*(volatile byte *)0x0103) >= 6) {
+        Flash_WriteExit();                 /* [0xF37D] */
+        return;
+    }
+
+    Flash_WriteEnter();                    /* [0xF375] */
+    EnterCritical();
+    blocked = Nvm_Process();               /* [0xC8AF] */
+    if (blocked != 0) {
+        COP_Feed();
+        Flash_WriteExit();                 /* [0xF37D] */
+        *(volatile byte *)0x0103 = (byte)(blocked / 5);
+        Tick_Advance((byte)((blocked % 5) + 1));   /* [0xC5DE] */
+    } else {
+        *(volatile byte *)0x0103 = 0;
+    }
+    ExitCritical();
+}

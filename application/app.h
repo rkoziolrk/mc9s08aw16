@@ -119,6 +119,28 @@ void Supervise_Task(void);       /* [0xCCD3] from Task_25Ticks */
 void Supervise_Tick(void);       /* [0xCCFC] from Task_10Ticks */
 void Lin_Housekeep(void);        /* [0xCD0A] from Task_10Ticks */
 
+/* ports.c extras / power.c - port refresh + sleep */
+void Port_Refresh(void);         /* [0xF33B] from Task_10Ticks */
+void Ports_SleepIo(void);        /* [0xF385] */
+void Ports_SleepDir(void);       /* [0xF39B] */
+void Sleep_Enter(void);          /* [0xC6BD] */
+void Power_Task(void);           /* [0xC5A1] from Task_10Ticks */
+void Sci_Disable(void);          /* [0xCD10] */
+void Tick_Advance(byte ticks);   /* [0xC5DE] */
+void Wake_SetRequest(byte bits); /* [0xC5CA] */
+
+/* nvm.c extras */
+void NvmTask_Run(void);          /* [0xC6F6] from Task_10Ticks */
+void Flash_WriteEnter(void);     /* [0xF375] */
+void Flash_WriteExit(void);      /* [0xF37D] */
+
+/* backlight.c extras */
+void Backlight_Control(void);    /* [0xE796] from Task_10Ticks */
+void Backlight_SetGate(byte on); /* [0xE7CB] */
+
+/* buttons.c extras */
+void Timers_Tick(void);          /* [0xEC3A] from Task_25Ticks */
+
 /* selftest.c - reset-cause logging + background flash-CRC / RAM tests */
 void ResetLog_Init(void);        /* [0xFA6B] */
 void SelfTest_Task(void);        /* [0xFAD4] from Task_10Ticks */

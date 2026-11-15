@@ -197,3 +197,36 @@ void Buttons_Calibrate(void)
     if (*(volatile byte *)0x0271 == 1) g_btnEvent = 1;
     if (*(volatile byte *)0x0272 == 1) g_btnEvent = 1;
 }
+
+/* ======================================================================
+ * Timers_Tick  [0xEC3A]   (called from Task_25Ticks)
+ * Service the button/output soft timers in the [0x0251..0x0261] block that
+ * Buttons_StateInit clears: decrement the two byte down-counters [0x025B]/
+ * [0x025F] and advance the four 16-bit up-counters [0x025C]/[0x0260]/
+ * [0x0251]/[0x0253]/[0x0255] (saturating at 0xFFFF).
+ * ====================================================================== */
+static void dec_byte(word a)
+{
+    if (*(volatile byte *)a != 0) {
+        (*(volatile byte *)a)--;
+    }
+}
+static void inc_word_sat(word a)
+{
+    word v = ((word)(*(volatile byte *)a) << 8) | *(volatile byte *)(a + 1);
+    if (v != 0 && v < 0xFFFF) {
+        v++;
+        *(volatile byte *)a       = (byte)(v >> 8);
+        *(volatile byte *)(a + 1) = (byte)(v & 0xFF);
+    }
+}
+void Timers_Tick(void)
+{
+    dec_byte(0x025B);
+    dec_byte(0x025F);
+    inc_word_sat(0x025C);
+    inc_word_sat(0x0260);
+    inc_word_sat(0x0251);
+    inc_word_sat(0x0253);
+    inc_word_sat(0x0255);
+}

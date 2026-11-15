@@ -73,10 +73,17 @@ against this image's asm.
       cause counters 0x0193..0x0196), SelfTest_Task 0xFAD4, FlashCrc_Step
       0xFAE9 (0xC400 XOR walk vs stored 0x019D/0x019E -> fault g_linFlags b4),
       RamTest_Step 0xFB9E (0xAA/0x55 march -> fault 0x0112 b1).
-- [ ] diag (C5A1), Wheel_Step 0xE796, port refresh F33B, sleep F385/F39B,
-      helper bodies (NvmTask_Run C6F6, Timers_Tick EC3A, Filter_Avg F4AB,
-      Table_Interp F535, Strap_Accumulate F8A7, Btn_Dispatch FCD8),
-      LIN transport bodies (point 4: DCCB/DBB7/DD6C/autobaud), E78B
+- [x] Scheduler glue + power: NvmTask_Run 0xC6F6 + Flash_WriteEnter/Exit
+      0xF375/0xF37D (nvm.c); Port_Refresh 0xF33B + Ports_SleepIo/Dir
+      0xF385/0xF39B (ports.c); Backlight_Control 0xE796 + Backlight_SetGate
+      0xE7CB (backlight.c); Timers_Tick 0xEC3A (buttons.c); power.c:
+      Sleep_Enter 0xC6BD, Power_Task 0xC5A1, Sci_Disable 0xCD10, Tick_Advance
+      0xC5DE, Wake_SetRequest 0xC5CA. tasks.c now fully named (no sub_ left).
+- [ ] LIN transport bodies (point 4): LinSched_OnHeader detail 0xDAD9,
+      LinDiag_Response 0xDBB7, LinErr_Report 0xDCCB, LinTp_Timer 0xDD6C,
+      ISO-TP RxFrame/TxFrame, autobaud; plus D191/E037/D722/D65A/D17B/E02C/
+      D6D2/C841; helper bodies (Filter_Avg F4AB, Table_Interp F535,
+      Strap_Accumulate F8A7, Btn_Dispatch FCD8); E78B init.
 - [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
       F607 CC56 EABE  (+ helper bodies Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7)
 

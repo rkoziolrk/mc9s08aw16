@@ -15,16 +15,7 @@
 extern byte g_slot10 AT(0x01A2);   /* 1..10 round-robin slot counter */
 
 /* ---- callees (lin_app.c reconstructs the LIN-application ones) --------- */
-void NvmTask_Run(void);         /* [0xC6F6] background flash write state machine */
-void Timers_Tick(void);         /* [0xEC3A] decrement the soft timers            */
-void Lin_Housekeep(void);       /* [0xCD0A] lin_app.c */
-void LinApp_DecodeCommand(void);/* [0xCC7E] lin_app.c - decode subscribed frame  */
-void Wheel_Step(void);          /* [0xE796] scroll/roll-wheel step processing    */
-void SelfTest_Task(void);       /* [0xFAD4] selftest.c - flash CRC + RAM test  */
-void Port_Refresh(void);        /* [0xF33B] */
-void Diag_Slot(void);           /* [0xC5A1] */
-void Supervise_Tick(void);      /* [0xCCFC] lin_app.c */
-void Supervise_Task(void);      /* [0xCCD3] lin_app.c */
+/* all slot callees are prototyped in app.h now; just the slot-4 latch here */
 extern byte g_heatReq AT(0x0266);   /* heating request latch (slot 4) */
 
 /* ======================================================================
@@ -43,11 +34,11 @@ void Task_2Ticks(void)
  * the flash task, the LIN housekeeping, the coding/wheel detection and the
  * button scan, then runs the slot-specific work.  The slot table (flash
  * 0xC665, index = g_slot10-1, 10 entries) selects:
- *     slots 0,2,6 : Signals_Build
- *     slots 1,3,5,7 : Wheel_Step + SelfTest_Task
- *     slot 4 : Heating_Task + Signals_Build (+ clear heat request)
- *     slot 8 : Signals_Build + Port_Refresh
- *     slot 9 : Heating_Task + SelfTest_Task + Diag_Slot + Signals_Extra +
+ *     slots 0,2,6 : LinApp_DecodeCommand
+ *     slots 1,3,5,7 : Backlight_Control + SelfTest_Task
+ *     slot 4 : Heating_Task + LinApp_DecodeCommand (+ clear heat request)
+ *     slot 8 : LinApp_DecodeCommand + Port_Refresh
+ *     slot 9 : Heating_Task + SelfTest_Task + Power_Task + Supervise_Tick +
  *              Backlight_Task
  * ====================================================================== */
 void Task_10Ticks(void)
@@ -65,7 +56,7 @@ void Task_10Ticks(void)
             LinApp_DecodeCommand();
             break;
         case 1: case 3: case 5: case 7:    /* [0xC680] */
-            Wheel_Step();
+            Backlight_Control();
             SelfTest_Task();
             break;
         case 4:                            /* [0xC688] */
@@ -82,7 +73,7 @@ void Task_10Ticks(void)
         case 9:                            /* [0xC6A1] */
             Heating_Task();
             SelfTest_Task();
-            Diag_Slot();
+            Power_Task();
             Supervise_Tick();
             Backlight_Task();
             break;

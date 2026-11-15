@@ -119,3 +119,41 @@ void Backlight_Task(void)
     }
     PTFD &= (byte)~0x01;
 }
+
+/* ======================================================================
+ * Backlight_Control  [0xE796]   (called from Task_10Ticks slots 1/3/5/7)
+ * Turn the backlight on/off and set its level from the dimming command
+ * g_dimLevel [0x02AA] and the enable gate [0x023C]:
+ *   - dim command 0x7E ("off") or the gate not set -> level 0, PWM off;
+ *   - otherwise the level is min(g_dimLevel, 0x50) written to [0x026E] and,
+ *     if the PWM is not already running, the channel is (re)started.
+ * The level [0x026E] is then scaled by Coding_Normalize into the PWM duty.
+ * ====================================================================== */
+extern byte g_dimLevel;              /* [0x02AA] */
+extern byte g_codingRaw2;            /* [0x026E] backlight level */
+
+void Backlight_Control(void)
+{
+    if (g_dimLevel == 0x7E || *(volatile byte *)0x023C != 1) {
+        g_codingRaw2 = 0;
+        Backlight_PwmOff();          /* [0xF464] */
+        return;
+    }
+
+    g_codingRaw2 = (g_dimLevel < 0x65) ? g_dimLevel : 0x50;
+    if (g_codingRaw2 == 0) {
+        Backlight_PwmOff();          /* [0xF464] */
+        return;
+    }
+    if (Backlight_IsOn() == 0) {     /* [0xF41A] */
+        Backlight_Init();            /* [0xF3F1] */
+        Coding_Normalize();          /* [0xE27D] level -> PWM duty */
+        Backlight_Restart();         /* [0xF428] */
+    }
+}
+
+/* ======================================================================
+ * Backlight_SetGate  [0xE7CB]
+ * Set the backlight enable gate [0x023C] (0 = force off).
+ * ====================================================================== */
+void Backlight_SetGate(byte on) { *(volatile byte *)0x023C = on; }
