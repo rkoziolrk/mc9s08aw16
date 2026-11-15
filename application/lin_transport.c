@@ -3,7 +3,7 @@
  *   LinCrc_Fold (0xDE88), LinSci_RxOn (0xDDFE) / RxOff (0xDE04),
  *   LinErr_Set (0xCA41), LinSched_OnHeader (0xDAD9), and the larger
  *   diagnostic/transport routines (LinErr_Report 0xDCCB, LinDiag_Response
- *   0xDBB7, LinTp_Timer 0xDD6C) which parallel the AW32 part (s909aw32).
+ *   0xDBB7, LinTp_Timer 0xDD6C) which parallel the AW32 part (mc9s08aw32).
  *
  * Frame tables (flash): node PID list at RAM 0x01E5, per-frame descriptor
  * at 0xFED1, signal-buffer pointer table at 0xFEE1.

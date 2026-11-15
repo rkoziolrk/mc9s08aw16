@@ -8,7 +8,7 @@ the ASCII string `... 105E221 - MFL ...` (MFL = *Multifunktionslenkrad*)
 with a build date `01 09 2014`.
 
 Functionally it is the same family as the A4 B8 panel decompiled in the
-companion repo `s909aw32`: it scans the steering-wheel buttons, the
+companion repo `mc9s08aw32`: it scans the steering-wheel buttons, the
 scroll/roll wheel, drives the button backlighting (PWM) and — on equipped
 variants — the steering-wheel heating, and exchanges button/scroll state and
 the backlight dimming level with the steering-column module over LIN.

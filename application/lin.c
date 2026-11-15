@@ -2,7 +2,7 @@
  * lin.c - LIN slave communication driver (SCI1 physical layer).
  *         Core: Sci_Init (0xCF10), Sci_SendByte (0xCF36), Isr_Sci1 (0xCF46).
  *
- * Same design as the AW32 sibling (s909aw32): 8-N-1, polled/interrupt SCI1,
+ * Same design as the AW32 sibling (mc9s08aw32): 8-N-1, polled/interrupt SCI1,
  * LIN BREAK detected as a framing error, SYNC-field auto-baud via a TPM2
  * input capture. The received/transmitted bytes of a frame are driven from
  * the SCI interrupt through two state machines:

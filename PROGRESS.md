@@ -7,7 +7,7 @@ instructions.
 
 Ground truth: `reference/application.asm` (full symbol-annotated disassembly)
 and `reference/function_index.md`. switch_jump helper = 0xFD76. The device is
-the same family as `rkoziolrk/s909aw32` (A4 B8), so most modules map over with
+the same family as `rkoziolrk/mc9s08aw32` (A4 B8), so most modules map over with
 address differences — reconstruct by analogy but verify every address/constant
 against this image's asm.
 
@@ -121,4 +121,4 @@ every routine annotated (regenerate from the scratchpad tools with
 `switch_jump=0xFD76`, image base 0xC000, Capstone HCS08 — remember it swaps
 bset/bclr). Pick the next `[ ]`, read its range in the asm, write the C into
 `application/<module>.c`, add prototypes to `app.h`, `make check`, update this
-file, commit. Reuse `s909aw32` as the structural reference.
+file, commit. Reuse `mc9s08aw32` as the structural reference.

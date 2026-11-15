@@ -10,7 +10,7 @@
  * Device: Audi A6 C7 multifunction steering-wheel (MFL) module, a LIN
  * slave (the image carries the ident string "...105E221 - MFL..."). See
  * DEVICE.md. The firmware is the same family as the A4 B8 panel in the
- * companion repo `s909aw32`, so the module structure is nearly identical.
+ * companion repo `mc9s08aw32`, so the module structure is nearly identical.
  */
 #include "app.h"
 

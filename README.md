@@ -9,7 +9,7 @@ the button backlighting and (on equipped variants) the steering-wheel
 heating. See `DEVICE.md`.
 
 It is the same firmware family as the A4 B8 panel in the companion repo
-**`rkoziolrk/s909aw32`**, which is used as the structural reference. Unlike
+**`rkoziolrk/mc9s08aw32`**, which is used as the structural reference. Unlike
 the AW32 part, this 16 KB image is a **single application with no separate
 LIN bootloader** (reset vector → 0xC4C0 directly).
 
