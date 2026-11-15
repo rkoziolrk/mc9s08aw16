@@ -59,7 +59,13 @@ against this image's asm.
       duty = 0xC8 - level, level = normalised ADC ch 0x0A (dimming input).
       NOTE: ch 0x0A = backlight dimming level, NOT variant coding (straps are);
       earlier inputs.c "coding" naming to be reconciled in the final pass.
-- [ ] Supply, diag, selftest, scroll/roll-wheel event handlers (0xE929..)
+- [x] LIN application layer -> lin_app.c: LinApp_Init 0xCC56, LinApp_Decode-
+      Command 0xCC7E (unpacks subscribed frame bytes 0x01BD/0x01BE/0x01C7/
+      0x01C8 -> control vars 0x02AE..0x02B3, dim level 0x02AA), Supervise_Task
+      0xCCD3 (bus-timeout), Supervise_Tick 0xCCFC, Lin_Housekeep 0xCD0A.
+      tasks.c now calls these by name.
+- [ ] Supply (FAD4/F33B), diag (C5A1), selftest, scroll/roll-wheel event
+      handlers (0xE929..0xEA6C), LIN transport bodies (point 4), E78B/FA6B
 - [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
       F607 CC56 EABE  (+ helper bodies Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7)
 

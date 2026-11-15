@@ -14,17 +14,17 @@
 
 extern byte g_slot10 AT(0x01A2);   /* 1..10 round-robin slot counter */
 
-/* ---- not-yet-individually-reconstructed callees (own modules later) --- */
-void NvmTask_Run(void);     /* [0xC6F6] background flash write state machine */
-void Timers_Tick(void);     /* [0xEC3A] decrement the soft timers            */
-void Lin_Housekeep(void);   /* [0xCD0A] */
-void Signals_Build(void);   /* [0xCC7E] publish signal assembly              */
-void Wheel_Step(void);      /* [0xE796] scroll/roll-wheel step processing    */
-void Supply_Task(void);     /* [0xFAD4] */
-void Port_Refresh(void);    /* [0xF33B] */
-void Diag_Slot(void);       /* [0xC5A1] */
-void Signals_Extra(void);   /* [0xCCFC] */
-void Status_Task(void);     /* [0xCCD3] */
+/* ---- callees (lin_app.c reconstructs the LIN-application ones) --------- */
+void NvmTask_Run(void);         /* [0xC6F6] background flash write state machine */
+void Timers_Tick(void);         /* [0xEC3A] decrement the soft timers            */
+void Lin_Housekeep(void);       /* [0xCD0A] lin_app.c */
+void LinApp_DecodeCommand(void);/* [0xCC7E] lin_app.c - decode subscribed frame  */
+void Wheel_Step(void);          /* [0xE796] scroll/roll-wheel step processing    */
+void Supply_Task(void);         /* [0xFAD4] */
+void Port_Refresh(void);        /* [0xF33B] */
+void Diag_Slot(void);           /* [0xC5A1] */
+void Supervise_Tick(void);      /* [0xCCFC] lin_app.c */
+void Supervise_Task(void);      /* [0xCCD3] lin_app.c */
 extern byte g_heatReq AT(0x0266);   /* heating request latch (slot 4) */
 
 /* ======================================================================
@@ -62,7 +62,7 @@ void Task_10Ticks(void)
     if ((byte)(g_slot10 - 1) < 0x0A) {
         switch ((byte)(g_slot10 - 1)) {
         case 0: case 2: case 6:            /* [0xC67B] */
-            Signals_Build();
+            LinApp_DecodeCommand();
             break;
         case 1: case 3: case 5: case 7:    /* [0xC680] */
             Wheel_Step();
@@ -70,20 +70,20 @@ void Task_10Ticks(void)
             break;
         case 4:                            /* [0xC688] */
             Heating_Task();
-            Signals_Build();
+            LinApp_DecodeCommand();
             if (g_heatReq == 1) {
                 g_heatReq = 0;
             }
             break;
         case 8:                            /* [0xC699] */
-            Signals_Build();
+            LinApp_DecodeCommand();
             Port_Refresh();
             break;
         case 9:                            /* [0xC6A1] */
             Heating_Task();
             Supply_Task();
             Diag_Slot();
-            Signals_Extra();
+            Supervise_Tick();
             Backlight_Task();
             break;
         default:
@@ -102,6 +102,6 @@ void Task_10Ticks(void)
  * ====================================================================== */
 void Task_25Ticks(void)
 {
-    Status_Task();             /* [0xCCD3] */
+    Supervise_Task();             /* [0xCCD3] */
     Timers_Tick();             /* [0xEC3A] */
 }

@@ -107,9 +107,15 @@ void Backlight_Restart(void);    /* [0xF428] */
 void Backlight_PwmOff(void);     /* [0xF464] */
 byte Backlight_IsOn(void);       /* [0xF41A] */
 
+/* lin_app.c - LIN application layer (command decode + supervision) */
+void LinApp_Init(void);          /* [0xCC56] */
+void LinApp_DecodeCommand(void); /* [0xCC7E] decode subscribed command frame */
+void Supervise_Task(void);       /* [0xCCD3] from Task_25Ticks */
+void Supervise_Tick(void);       /* [0xCCFC] from Task_10Ticks */
+void Lin_Housekeep(void);        /* [0xCD0A] from Task_10Ticks */
+
 /* Init-list targets not yet individually reconstructed (placeholder externs
  * so main.c links; each becomes a real module in a later pass). */
 void sub_FA6B(void); void sub_E78B(void);
-void sub_CC56(void);
 
 #endif /* APP_H */

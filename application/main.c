@@ -92,7 +92,7 @@ void App_InitAll(void)
     Coding_Probe();         /* [0xE2FB] coding validity + plausibility probe */
     Detect_Init();          /* [0xE517] detect/scan engine init             */
     Heating_OutputInit();   /* [0xF607] heating output default state         */
-    sub_CC56();             /* [0xCC56] */
+    LinApp_Init();          /* [0xCC56] LIN application/transport init       */
     Buttons_Calibrate();    /* [0xEABE] ladder reference calibration         */
     ExitCritical();         /* [0xF5F3] (jmp tail) */
 }
