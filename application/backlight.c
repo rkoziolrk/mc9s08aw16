@@ -61,7 +61,7 @@ void Backlight_PwmOff(void)
 }
 
 /* ======================================================================
- * Backlight_Init  [0xF3F1]   (called from App_InitAll via sub_F3F1, 0xC574)
+ * Backlight_Init  [0xF3F1]   (called from App_InitAll, 0xC574)
  * Park the PWM and clear the re-init request latch.
  * ====================================================================== */
 void Backlight_Init(void)
@@ -157,3 +157,15 @@ void Backlight_Control(void)
  * Set the backlight enable gate [0x023C] (0 = force off).
  * ====================================================================== */
 void Backlight_SetGate(byte on) { *(volatile byte *)0x023C = on; }
+
+/* ======================================================================
+ * Backlight_Reset  [0xE78B]   (called from App_InitAll, 0xC56E)
+ * Initialise the backlight to "off but enabled": clear the level [0x026E],
+ * set the enable gate [0x023C] and park the PWM.
+ * ====================================================================== */
+void Backlight_Reset(void)
+{
+    *(volatile byte *)0x026E = 0;    /* level 0 */
+    Backlight_SetGate(1);            /* [0xE7CB] enable gate on */
+    Backlight_PwmOff();              /* [0xF464] */
+}

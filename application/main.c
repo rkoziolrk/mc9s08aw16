@@ -82,7 +82,7 @@ void App_InitAll(void)
     COP_Feed();             /* [0xC739] */
     Tpm1_Init();            /* [0xC792] PWM (backlight)                     */
     ResetLog_Init();        /* [0xFA6B] log reset cause                      */
-    sub_E78B();             /* [0xE78B] */
+    Backlight_Reset();      /* [0xE78B] backlight off-but-enabled            */
     Coding_Reset();         /* [0xE271] reset normalised coding value       */
     Backlight_Init();       /* [0xF3F1] park backlight PWM                  */
     Buttons_StateInit();    /* [0xEA88] button output/event state init       */

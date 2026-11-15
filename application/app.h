@@ -140,6 +140,7 @@ void Flash_WriteExit(void);      /* [0xF37D] */
 /* backlight.c extras */
 void Backlight_Control(void);    /* [0xE796] from Task_10Ticks */
 void Backlight_SetGate(byte on); /* [0xE7CB] */
+void Backlight_Reset(void);      /* [0xE78B] */
 
 /* buttons.c extras */
 void Timers_Tick(void);          /* [0xEC3A] from Task_25Ticks */
@@ -152,6 +153,6 @@ void RamTest_Step(void);         /* [0xFB9E] */
 
 /* Init-list targets not yet individually reconstructed (placeholder externs
  * so main.c links; each becomes a real module in a later pass). */
-void sub_E78B(void);
+
 
 #endif /* APP_H */
