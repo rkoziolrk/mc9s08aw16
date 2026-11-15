@@ -22,7 +22,7 @@ against this image's asm.
 - [ ] NvmTask_Run 0xC6F6, Nvm_Init 0xC7DB, flash config writer 0xC400+
 - [x] Ports_Init 0xF28E -> ports.c; EnterCritical/ExitCritical 0xF5E6/0xF5F3 + Delay_Loop 0xF497 -> util.c
 - [ ] Tpm1_Init 0xC792, Tpm2_Init 0xC7B6, time-base ISR (see vectors)
-- [ ] LIN driver: Sci_Init 0xCF11 (SCI1BDL=0x41, SCI1C2=0x2C — same as AW32),
+- [~] LIN driver core -> lin.c (Sci_Init 0xCF10, Sci_SendByte 0xCF36, Isr_Sci1 0xCF46). TODO: autobaud, RX/TX engines (Lin_RxByte 0xDEA6, Lin_TxByteOrErr 0xDFB6), transport, signals
       autobaud, RX/TX byte engines, transport, signals
 - [ ] ADC + variant/feature detection (Adc_Read 0xE251, Sensor_Init 0xE22B, init 0xF690)
 - [ ] Buttons / backlight / scroll, supply, heating, diag, selftest

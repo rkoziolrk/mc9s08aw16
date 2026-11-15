@@ -446,7 +446,7 @@ LC737:
   C742:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_C743   [0xC743]
+; Isr_Tpm2Ch0   [0xC743]
 ;---------------------------------------------------------------
   C743:  8b           pshh   
   C744:  b6ce         lda    g_scratch
@@ -1279,7 +1279,7 @@ LCD8B:
 ;   .... data/gap CD9E-CF10 ....
 
 ;---------------------------------------------------------------
-; sub_CF10   [0xCF10]   <- D6CC
+; Sci_Init   [0xCF10]   <- D6CC
 ;---------------------------------------------------------------
   CF10:  87           psha   
   CF11:  3f38         clr    SCI1BDH
@@ -1300,7 +1300,7 @@ LCD8B:
   CF35:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_CF36   [0xCF36]   <- DE0B, DE56, DF23, DF3C
+; Sci_SendByte   [0xCF36]   <- DE0B, DE56, DF23, DF3C
 ;---------------------------------------------------------------
   CF36:  87           psha   
   CF37:  89           pshx   
@@ -1314,7 +1314,7 @@ LCD8B:
   CF45:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_CF46   [0xCF46]
+; Isr_Sci1   [0xCF46]
 ;---------------------------------------------------------------
   CF46:  8b           pshh   
   CF47:  b6ce         lda    g_scratch
@@ -1338,7 +1338,7 @@ LCD8B:
   CF6A:  2727         beq    LCF93
   CF6C:  9ee602       lda    2,s
   CF6F:  5f           clrx   
-  CF70:  cddea6       jsr    $DEA6
+  CF70:  cddea6       jsr    Lin_RxByte
   CF73:  201e         bra    LCF93
 LCF75:
   CF75:  9ee601       lda    1,s
@@ -1358,7 +1358,7 @@ LCF8D:
   CF8D:  5f           clrx   
   CF8E:  a604         lda    #$04
 LCF90:
-  CF90:  cddfb6       jsr    $DFB6
+  CF90:  cddfb6       jsr    Lin_TxByteOrErr
 LCF93:
   CF93:  a702         ais    #$02
   CF95:  8a           pulh   
@@ -2408,7 +2408,7 @@ LD68B:
   D6C4:  c701d6       sta    $01D6
   D6C7:  3fb1         clr    $B1
   D6C9:  c701d7       sta    $01D7
-  D6CC:  cdcf10       jsr    $CF10
+  D6CC:  cdcf10       jsr    Sci_Init
   D6CF:  ccde04       jmp    $DE04
 
 ;---------------------------------------------------------------
@@ -3559,7 +3559,7 @@ LDDFB:
 ;---------------------------------------------------------------
   DE08:  5f           clrx   
   DE09:  a680         lda    #$80
-  DE0B:  cdcf36       jsr    $CF36
+  DE0B:  cdcf36       jsr    Sci_SendByte
   DE0E:  6effb7       mov    #$FF, $B7
   DE11:  81           rts    
 
@@ -3603,7 +3603,7 @@ LDE52:
   DE52:  55b2         ldhx   $B2
   DE54:  f6           lda    ,x
   DE55:  5f           clrx   
-  DE56:  cdcf36       jsr    $CF36
+  DE56:  cdcf36       jsr    Sci_SendByte
   DE59:  55b2         ldhx   $B2
   DE5B:  b6b5         lda    $B5
   DE5D:  fb           add    ,x
@@ -3655,7 +3655,7 @@ LDEA3:
   DEA5:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_DEA6   [0xDEA6]   <- CF70
+; Lin_RxByte   [0xDEA6]   <- CF70
 ;---------------------------------------------------------------
   DEA6:  87           psha   
   DEA7:  89           pshx   
@@ -3722,7 +3722,7 @@ LDF0F:
   DF1F:  35b2         sthx   $B2
   DF21:  f6           lda    ,x
   DF22:  5f           clrx   
-  DF23:  cdcf36       jsr    $CF36
+  DF23:  cdcf36       jsr    Sci_SendByte
   DF26:  55b2         ldhx   $B2
   DF28:  b6b5         lda    $B5
   DF2A:  fb           add    ,x
@@ -3737,7 +3737,7 @@ LDF35:
   DF38:  b6b5         lda    $B5
   DF3A:  43           coma   
   DF3B:  5f           clrx   
-  DF3C:  cdcf36       jsr    $CF36
+  DF3C:  cdcf36       jsr    Sci_SendByte
   DF3F:  6e02b7       mov    #$02, $B7
   DF42:  206f         bra    LDFB3
 LDF44:
@@ -3808,7 +3808,7 @@ LDFB3:
   DFB5:  81           rts    
 
 ;---------------------------------------------------------------
-; sub_DFB6   [0xDFB6]   <- CF90
+; Lin_TxByteOrErr   [0xDFB6]   <- CF90
 ;---------------------------------------------------------------
   DFB6:  87           psha   
   DFB7:  89           pshx   

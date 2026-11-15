@@ -20,7 +20,7 @@
 | 0xC6EF | `SysOpt_Init` |
 | 0xC6F6 | `NvmTask_Run` |
 | 0xC739 | `COP_Feed` |
-| 0xC743 | `sub_C743` |
+| 0xC743 | `Isr_Tpm2Ch0` |
 | 0xC792 | `Tpm1_Init` |
 | 0xC7B6 | `Tpm2_Init` |
 | 0xC7DB | `Nvm_Init` |
@@ -43,9 +43,9 @@
 | 0xCD15 | `sub_CD15` |
 | 0xCD18 | `sub_CD18` |
 | 0xCD1B | `sub_CD1B` |
-| 0xCF10 | `sub_CF10` |
-| 0xCF36 | `sub_CF36` |
-| 0xCF46 | `sub_CF46` |
+| 0xCF10 | `Sci_Init` |
+| 0xCF36 | `Sci_SendByte` |
+| 0xCF46 | `Isr_Sci1` |
 | 0xCFA2 | `sub_CFA2` |
 | 0xD136 | `sub_D136` |
 | 0xD14E | `sub_D14E` |
@@ -78,8 +78,8 @@
 | 0xDE08 | `sub_DE08` |
 | 0xDE12 | `sub_DE12` |
 | 0xDE88 | `sub_DE88` |
-| 0xDEA6 | `sub_DEA6` |
-| 0xDFB6 | `sub_DFB6` |
+| 0xDEA6 | `Lin_RxByte` |
+| 0xDFB6 | `Lin_TxByteOrErr` |
 | 0xE02C | `sub_E02C` |
 | 0xE037 | `sub_E037` |
 | 0xE083 | `sub_E083` |
