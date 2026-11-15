@@ -69,8 +69,14 @@ against this image's asm.
       that publish button states [0x0271..0x0282], scroll event [0x0240] and
       combo event [0x02A6]. This region was a linear-sweep gap in the base
       listing; disassembled (HCS08) and spliced into reference/application.asm.
-- [ ] Supply (FAD4/F33B), diag (C5A1), selftest, LIN transport bodies
-      (point 4: DCCB/DBB7/DD6C/autobaud), E78B/FA6B, Wheel_Step 0xE796
+- [x] Self-test / reset log -> selftest.c: ResetLog_Init 0xFA6B (SRS reset-
+      cause counters 0x0193..0x0196), SelfTest_Task 0xFAD4, FlashCrc_Step
+      0xFAE9 (0xC400 XOR walk vs stored 0x019D/0x019E -> fault g_linFlags b4),
+      RamTest_Step 0xFB9E (0xAA/0x55 march -> fault 0x0112 b1).
+- [ ] diag (C5A1), Wheel_Step 0xE796, port refresh F33B, sleep F385/F39B,
+      helper bodies (NvmTask_Run C6F6, Timers_Tick EC3A, Filter_Avg F4AB,
+      Table_Interp F535, Strap_Accumulate F8A7, Btn_Dispatch FCD8),
+      LIN transport bodies (point 4: DCCB/DBB7/DD6C/autobaud), E78B
 - [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
       F607 CC56 EABE  (+ helper bodies Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7)
 

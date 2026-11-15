@@ -20,7 +20,7 @@ void Timers_Tick(void);         /* [0xEC3A] decrement the soft timers           
 void Lin_Housekeep(void);       /* [0xCD0A] lin_app.c */
 void LinApp_DecodeCommand(void);/* [0xCC7E] lin_app.c - decode subscribed frame  */
 void Wheel_Step(void);          /* [0xE796] scroll/roll-wheel step processing    */
-void Supply_Task(void);         /* [0xFAD4] */
+void SelfTest_Task(void);       /* [0xFAD4] selftest.c - flash CRC + RAM test  */
 void Port_Refresh(void);        /* [0xF33B] */
 void Diag_Slot(void);           /* [0xC5A1] */
 void Supervise_Tick(void);      /* [0xCCFC] lin_app.c */
@@ -44,10 +44,10 @@ void Task_2Ticks(void)
  * button scan, then runs the slot-specific work.  The slot table (flash
  * 0xC665, index = g_slot10-1, 10 entries) selects:
  *     slots 0,2,6 : Signals_Build
- *     slots 1,3,5,7 : Wheel_Step + Supply_Task
+ *     slots 1,3,5,7 : Wheel_Step + SelfTest_Task
  *     slot 4 : Heating_Task + Signals_Build (+ clear heat request)
  *     slot 8 : Signals_Build + Port_Refresh
- *     slot 9 : Heating_Task + Supply_Task + Diag_Slot + Signals_Extra +
+ *     slot 9 : Heating_Task + SelfTest_Task + Diag_Slot + Signals_Extra +
  *              Backlight_Task
  * ====================================================================== */
 void Task_10Ticks(void)
@@ -66,7 +66,7 @@ void Task_10Ticks(void)
             break;
         case 1: case 3: case 5: case 7:    /* [0xC680] */
             Wheel_Step();
-            Supply_Task();
+            SelfTest_Task();
             break;
         case 4:                            /* [0xC688] */
             Heating_Task();
@@ -81,7 +81,7 @@ void Task_10Ticks(void)
             break;
         case 9:                            /* [0xC6A1] */
             Heating_Task();
-            Supply_Task();
+            SelfTest_Task();
             Diag_Slot();
             Supervise_Tick();
             Backlight_Task();

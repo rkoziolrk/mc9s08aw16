@@ -81,7 +81,7 @@ void App_InitAll(void)
     Tpm2_Init();            /* [0xC7B6] time base + LIN capture             */
     COP_Feed();             /* [0xC739] */
     Tpm1_Init();            /* [0xC792] PWM (backlight)                     */
-    sub_FA6B();             /* [0xFA6B] */
+    ResetLog_Init();        /* [0xFA6B] log reset cause                      */
     sub_E78B();             /* [0xE78B] */
     Coding_Reset();         /* [0xE271] reset normalised coding value       */
     Backlight_Init();       /* [0xF3F1] park backlight PWM                  */

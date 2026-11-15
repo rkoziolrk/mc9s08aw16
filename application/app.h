@@ -119,8 +119,14 @@ void Supervise_Task(void);       /* [0xCCD3] from Task_25Ticks */
 void Supervise_Tick(void);       /* [0xCCFC] from Task_10Ticks */
 void Lin_Housekeep(void);        /* [0xCD0A] from Task_10Ticks */
 
+/* selftest.c - reset-cause logging + background flash-CRC / RAM tests */
+void ResetLog_Init(void);        /* [0xFA6B] */
+void SelfTest_Task(void);        /* [0xFAD4] from Task_10Ticks */
+void FlashCrc_Step(void);        /* [0xFAE9] */
+void RamTest_Step(void);         /* [0xFB9E] */
+
 /* Init-list targets not yet individually reconstructed (placeholder externs
  * so main.c links; each becomes a real module in a later pass). */
-void sub_FA6B(void); void sub_E78B(void);
+void sub_E78B(void);
 
 #endif /* APP_H */
