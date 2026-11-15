@@ -2409,7 +2409,7 @@ LD68B:
   D6C7:  3fb1         clr    $B1
   D6C9:  c701d7       sta    $01D7
   D6CC:  cdcf10       jsr    Sci_Init
-  D6CF:  ccde04       jmp    $DE04
+  D6CF:  ccde04       jmp    LinSci_RxOff
 
 ;---------------------------------------------------------------
 ; sub_D6D2   [0xD6D2]   <- CC74
@@ -3033,7 +3033,7 @@ LDAAD:
   DABA:  cdca75       jsr    $CA75
   DABD:  cdda3d       jsr    $DA3D
   DAC0:  adb6         bsr    LDA78
-  DAC2:  ccde04       jmp    $DE04
+  DAC2:  ccde04       jmp    LinSci_RxOff
 
 ;---------------------------------------------------------------
 ; sub_DAC5   [0xDAC5]   <- D712
@@ -3533,7 +3533,7 @@ LDDD7:
 LDDEB:
   DDEB:  3cc4         inc    $C4
   DDED:  6e97c3       mov    #$97, $C3
-  DDF0:  ad12         bsr    LDE04
+  DDF0:  ad12         bsr    LinSci_RxOff
   DDF2:  ad14         bsr    LDE08
   DDF4:  2005         bra    LDDFB
 LDDF6:
@@ -3549,7 +3549,7 @@ LDDFB:
   DE01:  ccd126       jmp    $D126
 
 ;---------------------------------------------------------------
-; sub_DE04   [0xDE04]   <- DDF0
+; LinSci_RxOff   [0xDE04]   <- DDF0
 ;---------------------------------------------------------------
   DE04:  6effb7       mov    #$FF, $B7
   DE07:  81           rts    

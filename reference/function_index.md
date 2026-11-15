@@ -74,7 +74,7 @@
 | 0xDCCB | `LinErr_Report` |
 | 0xDD6C | `LinTp_Timer` |
 | 0xDDFE | `LinSci_RxOn` |
-| 0xDE04 | `sub_DE04` |
+| 0xDE04 | `LinSci_RxOff` |
 | 0xDE08 | `sub_DE08` |
 | 0xDE12 | `sub_DE12` |
 | 0xDE88 | `LinCrc_Fold` |

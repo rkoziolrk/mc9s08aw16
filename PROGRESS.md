@@ -23,7 +23,7 @@ against this image's asm.
 - [~] NvmTask_Run 0xC6F6 (named), Nvm_Process 0xC8AF, flash writer 0xC400/0xC464 (named); Nvm_Init 0xC7DB TODO
 - [x] Ports_Init 0xF28E -> ports.c; EnterCritical/ExitCritical 0xF5E6/0xF5F3 + Delay_Loop 0xF497 -> util.c
 - [x] Tpm1_Init 0xC792, Tpm2_Init 0xC7B6, Isr_Tpm2Ch0 0xC743 -> timebase.c
-- [x] LIN byte engines -> lin.c (Lin_RxByte 0xDEA6, Lin_TxByteOrErr 0xDFB6, full state machines) + driver core. TODO: autobaud, transport/schedule/diag/signals
+- [x] LIN byte engines -> lin.c (Lin_RxByte 0xDEA6, Lin_TxByteOrErr 0xDFB6, full state machines) + driver core. transport helpers in lin_transport.c (LinCrc_Fold, LinSci_RxOn/Off, LinErr_Set, LinSched_OnHeader). TODO: autobaud, LinErr_Report/LinDiag_Response/LinTp_Timer detail, signals
       autobaud, RX/TX byte engines, transport, signals
 - [ ] ADC + variant/feature detection (Adc_Read 0xE251, Sensor_Init 0xE22B, init 0xF690)
 - [ ] Buttons / backlight / scroll, supply, heating, diag, selftest
