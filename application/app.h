@@ -107,6 +107,11 @@ void Backlight_Restart(void);    /* [0xF428] */
 void Backlight_PwmOff(void);     /* [0xF464] */
 byte Backlight_IsOn(void);       /* [0xF41A] */
 
+/* signals.c - button / scroll-wheel event handlers (publish side) */
+byte Scroll_Get(void);           /* [0xEA84] */
+extern byte g_scrollEvent;       /* [0x0240] roll-wheel event */
+extern byte g_comboEvent;        /* [0x02A6] two-button combo event */
+
 /* lin_app.c - LIN application layer (command decode + supervision) */
 void LinApp_Init(void);          /* [0xCC56] */
 void LinApp_DecodeCommand(void); /* [0xCC7E] decode subscribed command frame */

@@ -64,8 +64,13 @@ against this image's asm.
       0x01C8 -> control vars 0x02AE..0x02B3, dim level 0x02AA), Supervise_Task
       0xCCD3 (bus-timeout), Supervise_Tick 0xCCFC, Lin_Housekeep 0xCD0A.
       tasks.c now calls these by name.
-- [ ] Supply (FAD4/F33B), diag (C5A1), selftest, scroll/roll-wheel event
-      handlers (0xE929..0xEA6C), LIN transport bodies (point 4), E78B/FA6B
+- [x] Button/scroll signal handlers -> signals.c: the 0xE929..0xEA87 event
+      handlers (4 GPIO + 6 ladder windows + 2 combos + ch8/ch9 scroll + getter)
+      that publish button states [0x0271..0x0282], scroll event [0x0240] and
+      combo event [0x02A6]. This region was a linear-sweep gap in the base
+      listing; disassembled (HCS08) and spliced into reference/application.asm.
+- [ ] Supply (FAD4/F33B), diag (C5A1), selftest, LIN transport bodies
+      (point 4: DCCB/DBB7/DD6C/autobaud), E78B/FA6B, Wheel_Step 0xE796
 - [ ] Remaining App_InitAll targets: FA6B E78B F3F1 EA88 E7CF E229
       F607 CC56 EABE  (+ helper bodies Filter_Avg 0xF4AB, Strap_Accumulate 0xF8A7)
 
