@@ -49,20 +49,19 @@ that ID; the slave publishes the message's content.
 single event code for the active control, with wheel steps / paddles in other
 bytes.
 
-**The B1 event-code map is CONFIGURABLE data in the NVM config image**, not
-hard-coded. It sits at config offset **0x35** (NVM `0xC035` bank A / `0xC235`
-bank B → RAM `0x0155`), right after an ASCII label at offset 0x28:
+**The B1 event codes exist as CONFIGURABLE data in the NVM config image**, not
+hard-coded. A contiguous table at config offset **0x35** (NVM `0xC035` bank A /
+`0xC235` bank B → RAM `0x0155`), right after an ASCII label at offset 0x28,
+holds exactly the codes the monitor decodes:
 
 ```
-cfg+0x28: "221 - MFL"
-cfg+0x35: 21 1B 19 07 01 03 02 06 12 28 20 ...   <- the LIN event codes
-cfg+0x61: 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 11 12 13 14  <- control->slot remap
+cfg+0x28: "221 - MFL"                             <- ASCII variant/part label
+cfg+0x35: 21 1B 19 07 01 03 02 06 12 28 20 ...    <- event-code table
 ```
 
-So a pressed control is mapped (via the cfg+0x61 remap) to a slot, whose event
-code is taken from the cfg+0x35 table and placed in B1. Because it is NVM data
-it can differ per wheel; the values above are from the decompiled image and
-**match the monitor script's decode map exactly**:
+Because it is NVM data it can differ per wheel. The values above are from the
+decompiled image and **match the monitor script's decode map exactly** (10 of
+the script's distinct codes appear here, contiguously):
 
 | B1 code | control | in cfg table |
 |:-------:|---------|:------------:|
@@ -79,10 +78,14 @@ it can differ per wheel; the values above are from the decompiled image and
 | B6 = 0x21 / 0x22 | paddle − / paddle + (idle 0x20) | 0x21 in table |
 
 (The table also holds 0x28, a slot not named by the monitor — an unused /
-not-fitted control on the tested wheel.) The **B1 code values are therefore
-confirmed from firmware**; the exact field *positions* B2/B3/B6 in the 8-byte
-frame remain the script's tested layout (the packer itself is in a
-linear-sweep gap in the disassembly).
+not-fitted control on the tested wheel.) So the **B1 code set is firmware data
+that matches the script**. What is *not* firmware-traced: the packer that
+selects a control's code and places it (and the wheel steps / paddle) into the
+frame bytes — it is reached indirectly (switch-jump trampoline) and lives in a
+linear-sweep gap, so **which byte is B1/B3/B6 rests on the script's tested
+layout**. (Caution: the config also holds an unrelated table at offset 0x61
+`05 06 07 … 14` that feeds the *illumination* controller, not the button map —
+do not confuse the two.)
 
 ### Heating / NTC — message `0x503A` (2 bytes, "LRH")
 * **B0 = NTC temperature**, offset by 50 → `°C = B0 − 50` (the 0x32 offset is
