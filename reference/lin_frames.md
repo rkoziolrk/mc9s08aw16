@@ -46,28 +46,43 @@ that ID; the slave publishes the message's content.
 
 ### MFL — message `0x5000` (8 bytes)
 **Event-code model** (not a bitmap like the AW32 panel): the byte **B1** is a
-single event code for the active button, with wheel steps / paddles in other
-bytes. The firmware builds a per-button event-code array (`sub_EABE`,
-0x0273[]) and the event codes appear in the image (e.g. 0x07, 0x19, 0x20,
-0x21). The **exact B1 code → control table and the B2/B3/B6 layout are the
-monitor script's empirical mapping on a fully-equipped wheel** — the firmware
-confirms the mechanism and several codes, but the full table could not be
-enumerated from the disassembly (the packing routine falls in a linear-sweep
-gap). Monitor-confirmed mapping:
+single event code for the active control, with wheel steps / paddles in other
+bytes.
 
-| field | meaning |
-|-------|---------|
-| B1 = 0x01 | MODE |
-| B1 = 0x02 | PRAWO (right) |
-| B1 = 0x03 | LEWO / MODE |
-| B1 = 0x07 | left roller (press) |
-| B1 = 0x19 | voice (ROZP. MOWY) |
-| B1 = 0x1B | "i"/NAV |
-| B1 = 0x20 | right roller (press) |
-| B1 = 0x21 | programmable (*) button |
-| B1 = 0x06, B3 = steps | left roller rotation (signed) |
-| B1 = 0x12, B3 = steps | right roller rotation (signed) |
-| B6 = 0x21 / 0x22 | paddle − / paddle + (idle 0x20) |
+**The B1 event-code map is CONFIGURABLE data in the NVM config image**, not
+hard-coded. It sits at config offset **0x35** (NVM `0xC035` bank A / `0xC235`
+bank B → RAM `0x0155`), right after an ASCII label at offset 0x28:
+
+```
+cfg+0x28: "221 - MFL"
+cfg+0x35: 21 1B 19 07 01 03 02 06 12 28 20 ...   <- the LIN event codes
+cfg+0x61: 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 11 12 13 14  <- control->slot remap
+```
+
+So a pressed control is mapped (via the cfg+0x61 remap) to a slot, whose event
+code is taken from the cfg+0x35 table and placed in B1. Because it is NVM data
+it can differ per wheel; the values above are from the decompiled image and
+**match the monitor script's decode map exactly**:
+
+| B1 code | control | in cfg table |
+|:-------:|---------|:------------:|
+| 0x01 | MODE | ✔ |
+| 0x02 | PRAWO (right) | ✔ |
+| 0x03 | LEWO / MODE | ✔ |
+| 0x07 | left roller (press) | ✔ |
+| 0x19 | voice (ROZP. MOWY) | ✔ |
+| 0x1B | "i"/NAV | ✔ |
+| 0x20 | right roller (press) | ✔ |
+| 0x21 | programmable (*) button | ✔ |
+| 0x06 (B3 = steps) | left roller rotation (signed) | ✔ |
+| 0x12 (B3 = steps) | right roller rotation (signed) | ✔ |
+| B6 = 0x21 / 0x22 | paddle − / paddle + (idle 0x20) | 0x21 in table |
+
+(The table also holds 0x28, a slot not named by the monitor — an unused /
+not-fitted control on the tested wheel.) The **B1 code values are therefore
+confirmed from firmware**; the exact field *positions* B2/B3/B6 in the 8-byte
+frame remain the script's tested layout (the packer itself is in a
+linear-sweep gap in the disassembly).
 
 ### Heating / NTC — message `0x503A` (2 bytes, "LRH")
 * **B0 = NTC temperature**, offset by 50 → `°C = B0 − 50` (the 0x32 offset is
@@ -94,11 +109,12 @@ Everything the script relies on is **confirmed in the firmware**:
 * diagnostic request/response IDs **0x3C / 0x3D**; ✔
 * heating decode: NTC `B0 − 50`, `0xFF`/`0xFD` error codes, button in B1.b0. ✔
 
-**Not fully verifiable from the image:** the precise B1 event-code → button
-table and the B2/B3/B6 field layout of the 0x5000 MFL frame (disassembly gap
-in the packing routine). These rest on the script's tested behaviour on a
-fully-equipped wheel and are consistent with the event codes found in the
-firmware.
+* MFL B1 event codes — **confirmed**: the code values the script decodes are
+  the configurable table in the NVM image at cfg+0x35 (see above). ✔
+
+**Still script-derived (not firmware-proven):** only the exact B2/B3/B6 field
+*positions* inside the 8-byte 0x5000 frame — the packing routine is in a
+linear-sweep gap in the disassembly. The B1 code set itself is firmware data.
 
 ## Contrast with the AW32 panel
 
